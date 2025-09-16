@@ -1,0 +1,3 @@
+[submodule "config"]
+	path = config
+	url = https://github.com/8LOWUP/mcp-market-api-server-config.git
