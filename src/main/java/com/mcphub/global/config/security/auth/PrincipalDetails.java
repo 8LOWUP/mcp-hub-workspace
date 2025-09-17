@@ -1,6 +1,5 @@
 package com.mcphub.global.config.security.auth;
 
-import com.mcphub.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
