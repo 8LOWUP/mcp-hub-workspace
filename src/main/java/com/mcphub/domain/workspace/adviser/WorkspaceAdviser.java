@@ -10,7 +10,6 @@ import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
 import com.mcphub.domain.workspace.mapper.WorkspaceMapper;
 import com.mcphub.domain.workspace.service.WorkspaceService;
-import com.mcphub.global.util.ApiClient;
 import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
