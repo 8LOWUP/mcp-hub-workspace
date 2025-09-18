@@ -1,17 +1,19 @@
 package com.mcphub.domain.workspace.adviser;
 
 import com.mcphub.domain.workspace.converter.WorkspaceConverter;
-import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
-import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
-import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
-import com.mcphub.domain.workspace.dto.response.WorkspaceCreateResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceDetailResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceHistoryResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceUpdateResponse;
+import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import com.mcphub.domain.workspace.dto.request.*;
+import com.mcphub.domain.workspace.dto.response.*;
+import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
+import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
+import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
+import com.mcphub.domain.workspace.mapper.WorkspaceMapper;
 import com.mcphub.domain.workspace.service.WorkspaceService;
+import com.mcphub.global.util.ApiClient;
 import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -28,6 +30,8 @@ public class WorkspaceAdviser {
     private final WorkspaceService workspaceService;
 
     private final WorkspaceConverter workspaceConverter;
+    private final LlmTokenAdviser llmTokenAdviser;
+    private final ChatSenderManager chatSenderManager;
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
 
@@ -59,7 +63,7 @@ public class WorkspaceAdviser {
 
         // TODO: 해당 워크스페이스의 채팅 목록 조회
 
-        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId), null); // TODO: 채팅 목록 객체 넣기
+        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId.toString()), null); // TODO: 채팅 목록 객체 넣기
     }
 
     public WorkspaceUpdateResponse updateWorkspaceName(String workspaceId, WorkspaceUpdateRequest request) {
@@ -78,5 +82,26 @@ public class WorkspaceAdviser {
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
 
         return workspaceService.updateWorkspaceMcpActivation(request, workspaceId, userId.toString());
+    }
+
+    public WorkspaceChatResponse sendChat(String workspaceId, WorkspaceChatRequest request) {
+        //workspaceId와 userId로 유저가 활성화한 mcp 리스트와 토큰값 가져오기
+        String userId = securityUtils.getUserId().toString();
+        Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
+        List<UserMcp> userMcpList = workspaceService.getUserMcpListByMcpInfoList(userId, workspace.getMcps());
+
+        List<McpUrlTokenPair> mcpUrlTokenPairs = workspaceConverter.toMcpUrlTokenPariList(userMcpList);
+
+        //userId와 llmId로 llm 토큰 가져오기
+        LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(request.llmId());
+
+        //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
+        String llmResponse = chatSenderManager.getResponse(
+                llmTokenDto.llmId(),
+                llmTokenDto.llmToken(),
+                mcpUrlTokenPairs,
+                request.chatMessage());
+
+        return workspaceConverter.toWorkspaceChatResponse(workspaceId, llmResponse);
     }
 }

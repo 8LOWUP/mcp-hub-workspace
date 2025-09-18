@@ -5,8 +5,10 @@ import com.mcphub.domain.workspace.dto.request.CreateLlmTokenCommand;
 import com.mcphub.domain.workspace.dto.request.LlmTokenRequest;
 import com.mcphub.domain.workspace.dto.request.UpdateLlmTokenCommand;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenListResponse;
+import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenSaveResponse;
 import com.mcphub.domain.workspace.entity.LlmToken;
+import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.llm.tokenvalidator.TokenValidatorManager;
 import com.mcphub.domain.workspace.mapper.LlmTokenMapper;
 import com.mcphub.domain.workspace.service.LlmTokenService;
@@ -25,10 +27,16 @@ public class LlmTokenAdviser {
     private final SecurityUtils securityUtils;
     private final TokenValidatorManager tokenValidatorManager;
 
-    public LlmTokenListResponse getToken() {
+    public LlmTokenListResponse getAllToken() {
         Long userId = securityUtils.getUserId();
-        List<LlmToken> result = llmTokenService.get(userId.toString());
+        List<LlmToken> result = llmTokenService.getAll(userId.toString());
         return llmTokenConverter.toLlmTokenListResponse(result);
+    }
+
+    public LlmTokenResponse getToken(Llm llmId) {
+        Long userId = securityUtils.getUserId();
+        LlmToken result = llmTokenService.get(userId.toString(), llmId);
+        return llmTokenConverter.toLlmTokenResponse(result);
     }
 
     public LlmTokenSaveResponse registerToken(LlmTokenRequest request) {

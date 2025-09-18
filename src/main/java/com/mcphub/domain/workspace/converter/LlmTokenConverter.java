@@ -1,6 +1,7 @@
 package com.mcphub.domain.workspace.converter;
 
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenListResponse;
+import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenSaveResponse;
 import com.mcphub.domain.workspace.entity.LlmToken;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,13 @@ public class LlmTokenConverter {
 
         return LlmTokenListResponse.builder()
                 .llmTokens(dtoList)
+                .build();
+    }
+
+    public LlmTokenResponse toLlmTokenResponse(LlmToken llmToken) {
+        return LlmTokenResponse.builder()
+                .llmId(llmToken.getLlmId())
+                .llmToken(llmToken.getToken())
                 .build();
     }
 

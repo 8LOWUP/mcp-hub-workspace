@@ -1,13 +1,14 @@
 package com.mcphub.domain.workspace.converter;
 
-import com.mcphub.domain.workspace.dto.response.WorkspaceCreateResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceDetailResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceHistoryResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceUpdateResponse;
+import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import com.mcphub.domain.workspace.dto.response.*;
+import com.mcphub.domain.workspace.dto.response.api.LlmTokenListResponse;
+import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class WorkspaceConverter {
@@ -26,5 +27,21 @@ public class WorkspaceConverter {
 
     public WorkspaceUpdateResponse toWorkspaceUpdateResponse(Workspace workspace) {
         return new WorkspaceUpdateResponse(workspace.getId().toString(), workspace.getTitle(), workspace.getUpdatedAt());
+    }
+
+    public WorkspaceChatResponse toWorkspaceChatResponse(String workspaceId, String llmResponse) {
+        return WorkspaceChatResponse.builder()
+                .workspaceId(workspaceId)
+                .llmResponse(llmResponse)
+                .build();
+    }
+
+    public List<McpUrlTokenPair> toMcpUrlTokenPariList(List<UserMcp> userMcpList) {
+        return userMcpList.stream()
+                .map(userMcp -> McpUrlTokenPair.builder()
+                        .url(userMcp.getRequestUrl())
+                        .token(userMcp.getMcpToken())
+                        .build())
+                .toList();
     }
 }

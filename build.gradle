@@ -92,6 +92,8 @@ dependencies {
 	implementation 'com.anthropic:anthropic-java:2.6.0'
 
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 tasks.named('test') {

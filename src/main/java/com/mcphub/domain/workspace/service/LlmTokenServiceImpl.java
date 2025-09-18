@@ -3,6 +3,7 @@ package com.mcphub.domain.workspace.service;
 import com.mcphub.domain.workspace.dto.request.CreateLlmTokenCommand;
 import com.mcphub.domain.workspace.dto.request.UpdateLlmTokenCommand;
 import com.mcphub.domain.workspace.entity.LlmToken;
+import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.LlmTokenMongoRepository;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
@@ -20,7 +21,7 @@ public class LlmTokenServiceImpl implements LlmTokenService {
     private final StringEncryptor stringEncryptor;
 
     @Transactional
-    public List<LlmToken> get(String userId) {
+    public List<LlmToken> getAll(String userId) {
         List<LlmToken> llmTokenList = llmTokenMongoRepository.findByUserId(userId);
 
         return llmTokenList.stream()
@@ -29,6 +30,14 @@ public class LlmTokenServiceImpl implements LlmTokenService {
                     llmToken.setToken(decryptedToken);
                 })
                 .toList();
+    }
+
+    @Transactional
+    public LlmToken get(String userId, Llm llmId) {
+        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId);
+        llmToken.setToken(stringEncryptor.decrypt(llmToken.getToken()));
+
+        return llmToken;
     }
 
     @Transactional

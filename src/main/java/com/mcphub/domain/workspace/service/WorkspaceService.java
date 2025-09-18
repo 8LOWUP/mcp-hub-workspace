@@ -1,8 +1,10 @@
 package com.mcphub.domain.workspace.service;
 
+import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
+import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 
 import java.util.List;
@@ -17,11 +19,13 @@ public interface WorkspaceService {
 
     List<Workspace> getWorkspaceHistory(String userId);
 
-    Workspace getWorkspaceDetail(String workspaceId, Long userId);
+    Workspace getWorkspaceDetail(String workspaceId, String userId);
 
     Workspace updateWorkspace(WorkspaceUpdateRequest request, String workspaceId, String userId);
 
     boolean deleteWorkspace(String workspaceId, String userId);
 
     boolean updateWorkspaceMcpActivation(WorkspaceMcpUpdateRequest request, String workspaceId, String userId);
+
+    List<UserMcp> getUserMcpListByMcpInfoList(String userId, List<McpInfo> mcpInfoList);
 }

@@ -23,4 +23,9 @@ public class SecurityUtils {
             return null;
         }
     }
+
+    public String getUserAccessToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (String) authentication.getDetails();
+    }
 }
