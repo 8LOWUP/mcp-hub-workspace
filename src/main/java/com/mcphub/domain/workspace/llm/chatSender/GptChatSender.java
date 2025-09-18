@@ -1,5 +1,7 @@
 package com.mcphub.domain.workspace.llm.chatSender;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +25,7 @@ public class GptChatSender implements ChatSender {
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         JSONObject requestBody = new JSONObject();
         requestBody.put("model", "gpt-5");
 
@@ -51,7 +54,17 @@ public class GptChatSender implements ChatSender {
         try {
             // 요청 보내고 응답 받기
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.body();
+
+            JsonNode rootNode = objectMapper.readTree(response.body());
+            JsonNode outputArray = rootNode.get("output");
+            JsonNode node = null;
+
+            if (outputArray != null && outputArray.isArray() && !outputArray.isEmpty()) {
+                // 마지막 요소 반환
+                node = outputArray.get(outputArray.size() - 1);
+                node = node.get("content").get(0).get("text");
+            }
+            return objectMapper.writeValueAsString(node);
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
