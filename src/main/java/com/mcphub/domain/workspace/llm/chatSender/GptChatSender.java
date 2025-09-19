@@ -35,7 +35,8 @@ public class GptChatSender implements ChatSender {
             tool.put("type", "mcp");
             tool.put("server_label", "mcps");
             tool.put("server_url", mcpUrlTokenPair.url());
-            tool.put("authorization", mcpUrlTokenPair.token());
+            if(!Objects.equals(mcpUrlTokenPair.token(), ""))
+                tool.put("authorization", mcpUrlTokenPair.token());
             tool.put("require_approval", "never");
 
             tools.add(tool);
