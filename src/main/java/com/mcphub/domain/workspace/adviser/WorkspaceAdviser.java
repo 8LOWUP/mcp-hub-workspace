@@ -86,6 +86,9 @@ public class WorkspaceAdviser {
     }
 
     public WorkspaceChatResponse sendChat(String workspaceId, WorkspaceChatRequest request) {
+        //유저 요청 저장
+        workspaceService.createChat(workspaceId, request.chatMessage(), true);
+
         //workspaceId와 userId로 유저가 활성화한 mcp 리스트와 토큰값 가져오기
         String userId = securityUtils.getUserId().toString();
         Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
@@ -102,6 +105,9 @@ public class WorkspaceAdviser {
                 llmTokenDto.llmToken(),
                 mcpUrlTokenPairs,
                 request.chatMessage());
+
+        //response 저장
+        workspaceService.createChat(workspaceId, llmResponse.toString(), false);
 
         return workspaceConverter.toWorkspaceChatResponse(workspaceId, llmResponse);
     }

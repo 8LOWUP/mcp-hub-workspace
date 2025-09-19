@@ -4,6 +4,7 @@ import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
+import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 
@@ -26,4 +27,6 @@ public interface WorkspaceService {
     boolean deleteWorkspace(String workspaceId, String userId);
 
     boolean updateWorkspaceMcpActivation(WorkspaceMcpUpdateRequest request, String workspaceId, String userId);
+
+    Chat createChat(String workspaceId, String chatMessage, boolean isRequest);
 }

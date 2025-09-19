@@ -4,8 +4,10 @@ import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
+import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
+import com.mcphub.domain.workspace.repository.mongo.ChatMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.UserMcpMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.WorkspaceMongoRepository;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
@@ -24,6 +26,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public static final int MCP_TOLERANCE_NUMBER = 3; // 워크스페이스 당 허용된 MCP 개수
 
     private final WorkspaceMongoRepository workspaceMongoRepository;
+    private final ChatMongoRepository chatMongoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -141,5 +144,15 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         workspaceMongoRepository.save(updatedWorkspace);
         return true;
+    }
+
+    @Override
+    public Chat createChat(String workspaceId, String chatMessage, boolean isRequest) {
+        Chat chat = Chat.builder()
+                .workspaceId(workspaceId)
+                .chat(chatMessage)
+                .isRequest(isRequest)
+                .build();
+        return chatMongoRepository.save(chat);
     }
 }

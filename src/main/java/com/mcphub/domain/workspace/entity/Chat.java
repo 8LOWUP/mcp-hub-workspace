@@ -22,7 +22,7 @@ public class Chat extends BaseDocument implements Persistable<String> {
     private String id;
     private String workspaceId;
     private String chat;
-    private boolean senderType;
+    private boolean isRequest;
 
     @Override
     public boolean isNew() {
