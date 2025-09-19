@@ -26,6 +26,4 @@ public interface WorkspaceService {
     boolean deleteWorkspace(String workspaceId, String userId);
 
     boolean updateWorkspaceMcpActivation(WorkspaceMcpUpdateRequest request, String workspaceId, String userId);
-
-    List<UserMcp> getUserMcpListByMcpInfoList(String userId, List<McpInfo> mcpInfoList);
 }

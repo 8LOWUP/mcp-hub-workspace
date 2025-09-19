@@ -31,6 +31,7 @@ public class WorkspaceAdviser {
 
     private final WorkspaceConverter workspaceConverter;
     private final LlmTokenAdviser llmTokenAdviser;
+    private final UserMcpAdviser userMcpAdviser;
     private final ChatSenderManager chatSenderManager;
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
@@ -88,12 +89,12 @@ public class WorkspaceAdviser {
         //workspaceId와 userId로 유저가 활성화한 mcp 리스트와 토큰값 가져오기
         String userId = securityUtils.getUserId().toString();
         Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
-        List<UserMcp> userMcpList = workspaceService.getUserMcpListByMcpInfoList(userId, workspace.getMcps());
 
-        List<McpUrlTokenPair> mcpUrlTokenPairs = workspaceConverter.toMcpUrlTokenPariList(userMcpList);
+        //userMcpLsit => mcp_id => 요청 => 받아서 mcpUrlTokenPairs
+        List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, workspace.getMcps());
 
         //userId와 llmId로 llm 토큰 가져오기
-        LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(request.llmId());
+        LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
         JsonNode llmResponse = chatSenderManager.getResponse(

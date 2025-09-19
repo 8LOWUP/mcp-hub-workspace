@@ -48,7 +48,17 @@ services:
       mm_local_network:
         ipv4_address: ${NETWORK_MONGODB_IP}
     restart: always
-
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - ${RABBITMQ_AMQP_PORT}  # AMQP
+      - ${RABBITMQ_CONSOLE_PORT} # 관리 콘솔
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - mm_local_network
 networks:
   mm_local_network:
     name: mm_local_network

@@ -24,7 +24,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public static final int MCP_TOLERANCE_NUMBER = 3; // 워크스페이스 당 허용된 MCP 개수
 
     private final WorkspaceMongoRepository workspaceMongoRepository;
-    private final UserMcpMongoRepository userMcpMongoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,7 +36,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Workspace createWorkspace(WorkspaceCreateRequest request, String userId, String workspaceName) {
 
         // request 관련 에러 처리
-        if (request.llmId().isEmpty()
+        if (request.llmId() == null
                 || request.mcps().isEmpty()
                 || userId.isEmpty()
                 || workspaceName.isEmpty())
@@ -60,7 +59,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Workspace createWorkspaceByRecentWorkspace(Workspace recentWorkspace, String userId, String workspaceName) {
         // request 관련 에러 처리
         if (userId.isEmpty()) throw new RestApiException(WorkspaceErrorStatus.USER_ID_NOT_FOUND_IN_TOKEN);
-        if (recentWorkspace.getLlmId().isEmpty()
+        if (recentWorkspace.getLlmId() == null
                 || recentWorkspace.getMcps().isEmpty()
                 || workspaceName.isEmpty())
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
@@ -142,17 +141,5 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         workspaceMongoRepository.save(updatedWorkspace);
         return true;
-    }
-
-    @Override
-    @Transactional
-    public List<UserMcp> getUserMcpListByMcpInfoList(String userId, List<McpInfo> mcpInfoList) {
-        List<UserMcp> userMcpList = new ArrayList<>();
-        for (McpInfo mcpInfo : mcpInfoList) {
-            if(mcpInfo.isActive())
-                userMcpList.add(userMcpMongoRepository.findByUserIdAndMcpId(userId, mcpInfo.getId()));
-        }
-
-        return userMcpList;
     }
 }
