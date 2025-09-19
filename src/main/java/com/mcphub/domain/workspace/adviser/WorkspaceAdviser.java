@@ -1,5 +1,6 @@
 package com.mcphub.domain.workspace.adviser;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mcphub.domain.workspace.converter.WorkspaceConverter;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import com.mcphub.domain.workspace.dto.request.*;
@@ -95,7 +96,7 @@ public class WorkspaceAdviser {
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(request.llmId());
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
-        String llmResponse = chatSenderManager.getResponse(
+        JsonNode llmResponse = chatSenderManager.getResponse(
                 llmTokenDto.llmId(),
                 llmTokenDto.llmToken(),
                 mcpUrlTokenPairs,

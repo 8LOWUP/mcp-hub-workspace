@@ -33,7 +33,7 @@ public class WorkspaceConverter {
         return new WorkspaceUpdateResponse(workspace.getId().toString(), workspace.getTitle(), workspace.getUpdatedAt());
     }
 
-    public WorkspaceChatResponse toWorkspaceChatResponse(String workspaceId, String llmResponse) {
+    public WorkspaceChatResponse toWorkspaceChatResponse(String workspaceId, JsonNode llmResponse) {
         return WorkspaceChatResponse.builder()
                 .workspaceId(workspaceId)
                 .llmResponse(llmResponse)

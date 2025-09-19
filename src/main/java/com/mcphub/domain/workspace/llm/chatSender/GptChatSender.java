@@ -18,7 +18,7 @@ import java.util.*;
 
 public class GptChatSender implements ChatSender {
     @Override
-    public String getResponse(String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
+    public JsonNode getResponse(String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
         // HTTP 클라이언트 생성
         HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
@@ -64,7 +64,7 @@ public class GptChatSender implements ChatSender {
                 node = outputArray.get(outputArray.size() - 1);
                 node = node.get("content").get(0).get("text");
             }
-            return objectMapper.writeValueAsString(node);
+            return node;
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.mcphub.domain.workspace.llm.chatSender;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class ChatSenderManager {
             Llm.CLAUDE, new ClaudeChatSender()
     );
 
-    public String getResponse(Llm llmId, String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
+    public JsonNode getResponse(Llm llmId, String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
         return validatorMap.getOrDefault(llmId, new DefaultChatSender()).getResponse(llmToken, mcpUrlTokenList, chatMessage);
     }
 }
