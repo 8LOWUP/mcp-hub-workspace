@@ -10,17 +10,16 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "userMcp")
+@Document(collection = "mcpUrl")
 @Getter
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class UserMcp extends BaseDocument implements Persistable<String> {
+public class McpUrl extends BaseDocument implements Persistable<String> {
     @Id
     private String id;
-    private String userId;
     private String mcpId;
-    private String mcpToken;
+    private String mcpUrl;
 
     @Override
     public boolean isNew() {

@@ -1,23 +1,25 @@
 package com.mcphub.domain.workspace.service;
 
 import com.mcphub.domain.workspace.common.McpInfo;
-import com.mcphub.domain.workspace.dto.request.McpIdRequest;
-import com.mcphub.domain.workspace.dto.response.McpUrlResponse;
+import com.mcphub.domain.workspace.dto.McpId;
+import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
+import com.mcphub.domain.workspace.repository.mongo.McpUrlMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.UserMcpMongoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserMcpServiceImpl implements UserMcpService {
     private final UserMcpMongoRepository userMcpMongoRepository;
-    private final RabbitTemplate rabbitTemplate;
+    private final McpUrlMongoRepository mcpUrlMongoRepository;
 
     @Override
     @Transactional
@@ -32,8 +34,12 @@ public class UserMcpServiceImpl implements UserMcpService {
     }
 
     @Override
-    public List<McpUrlResponse> getMcpUrlList(List<McpIdRequest> mcpIdRequestList) {
-        rabbitTemplate.convertAndSend("mcp.queue", mcpIdRequestList);
-        return List.of();
+    @Transactional
+    public List<McpUrl> getMcpUrlListByMcpIdList(List<McpId> mcpIdList) {
+        List<McpUrl> mcpUrlList = new ArrayList<>();
+        for(McpId mcpId : mcpIdList){
+            mcpUrlList.add(mcpUrlMongoRepository.findByMcpId(mcpId.mcpId()));
+        }
+        return mcpUrlList;
     }
 }

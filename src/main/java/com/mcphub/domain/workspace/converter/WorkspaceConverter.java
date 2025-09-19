@@ -39,13 +39,4 @@ public class WorkspaceConverter {
                 .llmResponse(llmResponse)
                 .build();
     }
-
-    public List<McpUrlTokenPair> toMcpUrlTokenPariList(List<UserMcp> userMcpList) {
-        return userMcpList.stream()
-                .map(userMcp -> McpUrlTokenPair.builder()
-                        .url(userMcp.getRequestUrl())
-                        .token(userMcp.getMcpToken())
-                        .build())
-                .toList();
-    }
 }
