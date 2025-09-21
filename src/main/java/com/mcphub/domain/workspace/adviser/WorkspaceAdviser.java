@@ -6,6 +6,7 @@ import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import com.mcphub.domain.workspace.dto.request.*;
 import com.mcphub.domain.workspace.dto.response.*;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
+import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
@@ -33,6 +34,8 @@ public class WorkspaceAdviser {
     private final LlmTokenAdviser llmTokenAdviser;
     private final UserMcpAdviser userMcpAdviser;
     private final ChatSenderManager chatSenderManager;
+
+    private final int DEFAULT_PREVIOUS_CHATS = 5;
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
 
@@ -99,12 +102,16 @@ public class WorkspaceAdviser {
         //userId와 llmId로 llm 토큰 가져오기
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());
 
+        //이전 채팅 기록 가져오기
+        List<Chat> chatList = workspaceService.getChats(workspaceId, DEFAULT_PREVIOUS_CHATS);
+        String prompt = workspaceConverter.toPrompt(chatList, request.chatMessage());
+
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
         JsonNode llmResponse = chatSenderManager.getResponse(
                 llmTokenDto.llmId(),
                 llmTokenDto.llmToken(),
                 mcpUrlTokenPairs,
-                request.chatMessage());
+                prompt);
 
         //response 저장
         workspaceService.createChat(workspaceId, llmResponse.toString(), false);

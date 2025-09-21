@@ -29,4 +29,6 @@ public interface WorkspaceService {
     boolean updateWorkspaceMcpActivation(WorkspaceMcpUpdateRequest request, String workspaceId, String userId);
 
     Chat createChat(String workspaceId, String chatMessage, boolean isRequest);
+
+    List<Chat> getChats(String workspaceId, int count);
 }

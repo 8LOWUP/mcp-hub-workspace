@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import com.mcphub.domain.workspace.dto.response.*;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenListResponse;
+import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import org.springframework.stereotype.Component;
@@ -38,5 +39,22 @@ public class WorkspaceConverter {
                 .workspaceId(workspaceId)
                 .llmResponse(llmResponse)
                 .build();
+    }
+
+    public String toPrompt(List<Chat> chats, String chatMessage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("다음은 이전 대화 내용입니다:\n\n");
+
+        for (Chat chat : chats) {
+            if (chat.isRequest()) {
+                sb.append("사용자: ").append(chat.getChat()).append("\n");
+            } else {
+                sb.append("챗봇: ").append(chat.getChat()).append("\n");
+            }
+        }
+
+        sb.append("\n이어서 답변해 주세요.\n");
+        sb.append(chatMessage);
+        return sb.toString();
     }
 }

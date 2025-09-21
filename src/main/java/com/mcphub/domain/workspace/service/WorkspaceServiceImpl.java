@@ -155,4 +155,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .build();
         return chatMongoRepository.save(chat);
     }
+
+    @Override
+    public List<Chat> getChats(String workspaceId, int  count) {
+        return chatMongoRepository.findTopNByWorkspaceIdOrderByCreatedAtDesc(workspaceId, count);
+    }
 }
