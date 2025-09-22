@@ -33,6 +33,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     private final WorkspaceMongoRepository workspaceMongoRepository;
     private final ChatMongoRepository chatMongoRepository;
+    private final UserMcpMongoRepository userMcpMongoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,31 +45,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Transactional
     public Workspace createWorkspace(String userId, WorkspaceCreateRequest request) {
         // request 관련 에러 처리
-        if (userId.isEmpty())
+        if (userId.isEmpty() || request.llmId() == null || request.mcps().isEmpty())
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
 
-        Optional<Workspace> recentWorkspaceOpt = workspaceMongoRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
-        Llm llmId = null;
-        List<McpInfo> mcps = null;
-
-        if (recentWorkspaceOpt.isPresent()) {
-            // 이전 워크스페이스가 존재하는 경우
-            Workspace recentWorkspace = recentWorkspaceOpt.get();
-            llmId = recentWorkspace.getLlmId();
-            mcps = recentWorkspace.getMcps();
-        } else {
-            // 이전 워크스페이스가 존재하지 않는 경우
-            if (request.llmId() == null || request.mcps().isEmpty())
-                throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
-
-            llmId = request.llmId();
-            mcps = request.mcps();
-        }
-
         return workspaceMongoRepository.save(Workspace.builder()
-                .llmId(llmId)
+                .llmId(request.llmId())
                 .userId(userId)
-                .mcps(mcps)
+                .mcps(request.mcps())
                 .title(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build());
     }
@@ -122,6 +105,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (!deletedWorkspace.getUserId().equals(userId))
             throw new RestApiException(WorkspaceErrorStatus.DELETED_WORKSPACE);
         deletedWorkspace.delete();
+        List<Chat> deletedChats = chatMongoRepository.findByWorkspaceId(workspaceId);
+        for (Chat deletedChat: deletedChats) {
+            deletedChat.delete();
+            chatMongoRepository.delete(deletedChat);
+        }
+
         return workspaceMongoRepository.save(deletedWorkspace).isDeleted();
     }
 
