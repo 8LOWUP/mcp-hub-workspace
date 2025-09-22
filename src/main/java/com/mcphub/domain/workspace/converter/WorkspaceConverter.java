@@ -9,6 +9,7 @@ import com.mcphub.domain.workspace.dto.response.api.LlmTokenListResponse;
 import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,11 +42,11 @@ public class WorkspaceConverter {
                 .build();
     }
 
-    public String toPrompt(List<Chat> chats, String chatMessage) {
+    public String toPrompt(Page<Chat> chats, String chatMessage) {
         StringBuilder sb = new StringBuilder();
         sb.append("다음은 이전 대화 내용입니다:\n\n");
 
-        for (Chat chat : chats) {
+        for (Chat chat : chats.getContent()) {
             if (chat.isRequest()) {
                 sb.append("사용자: ").append(chat.getChat()).append("\n");
             } else {

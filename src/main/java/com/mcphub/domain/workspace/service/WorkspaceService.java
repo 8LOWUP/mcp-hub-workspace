@@ -7,6 +7,7 @@ import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -30,5 +31,5 @@ public interface WorkspaceService {
 
     Chat createChat(String workspaceId, String chatMessage, boolean isRequest);
 
-    List<Chat> getChats(String workspaceId, int count);
+    Page<Chat> getChats(String workspaceId, int count);
 }

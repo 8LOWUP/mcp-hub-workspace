@@ -15,6 +15,7 @@ import com.mcphub.domain.workspace.service.WorkspaceService;
 import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WorkspaceAdviser {
@@ -103,8 +105,9 @@ public class WorkspaceAdviser {
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());
 
         //이전 채팅 기록 가져오기
-        List<Chat> chatList = workspaceService.getChats(workspaceId, DEFAULT_PREVIOUS_CHATS);
+        Page<Chat> chatList = workspaceService.getChats(workspaceId, DEFAULT_PREVIOUS_CHATS);
         String prompt = workspaceConverter.toPrompt(chatList, request.chatMessage());
+        log.info(prompt);
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
         JsonNode llmResponse = chatSenderManager.getResponse(

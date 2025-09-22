@@ -13,6 +13,8 @@ import com.mcphub.domain.workspace.repository.mongo.WorkspaceMongoRepository;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,7 +159,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
-    public List<Chat> getChats(String workspaceId, int  count) {
-        return chatMongoRepository.findTopNByWorkspaceIdOrderByCreatedAtDesc(workspaceId, count);
+    public Page<Chat> getChats(String workspaceId, int count) {
+        return chatMongoRepository.findByWorkspaceIdOrderByCreatedAtDesc(workspaceId, PageRequest.of(0, count));
     }
 }
