@@ -3,6 +3,7 @@ package com.mcphub.domain.workspace.llm.chatSender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import org.apache.commons.collections4.ListUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -30,7 +31,7 @@ public class GptChatSender implements ChatSender {
         requestBody.put("model", "gpt-5");
 
         JSONArray tools = new JSONArray();
-        for (McpUrlTokenPair mcpUrlTokenPair : mcpUrlTokenList) {
+        for (McpUrlTokenPair mcpUrlTokenPair : ListUtils.emptyIfNull(mcpUrlTokenList)) {
             JSONObject tool = new JSONObject();
             tool.put("type", "mcp");
             tool.put("server_label", "mcps");

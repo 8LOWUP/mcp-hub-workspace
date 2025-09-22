@@ -8,5 +8,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ChatMongoRepository extends MongoRepository<Chat, String> {
+    List<Chat> findByWorkspaceId(String workspaceId);
     Page<Chat> findByWorkspaceIdOrderByCreatedAtDesc(String workspaceId, Pageable pageable);
 }

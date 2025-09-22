@@ -165,6 +165,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional
+    public List<Chat> getAllChats(String workspaceId) {
+        return chatMongoRepository.findByWorkspaceId(workspaceId);
+    }
+
+    @Override
+    @Transactional
     public Page<Chat> getChats(String workspaceId, int count) {
         return chatMongoRepository.findByWorkspaceIdOrderByCreatedAtDesc(workspaceId, PageRequest.of(0, count));
     }

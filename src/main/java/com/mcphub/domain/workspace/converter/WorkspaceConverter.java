@@ -20,19 +20,22 @@ import java.util.stream.Collectors;
 public class WorkspaceConverter {
 
     public WorkspaceCreateResponse toWorkspaceCreateResponse(Workspace workspace, String response) {
-        return new WorkspaceCreateResponse(workspace.getUserId(), workspace.getId().toString(), workspace.getLlmId(), workspace.getMcps(), response, workspace.getTitle(), workspace.getCreatedAt());
+        return new WorkspaceCreateResponse(workspace.getUserId(), workspace.getId(), workspace.getLlmId(), workspace.getMcps(), response, workspace.getTitle(), workspace.getCreatedAt());
     }
 
     public WorkspaceHistoryResponse toWorkspaceHistoryResponse(Workspace workspace) {
-        return new WorkspaceHistoryResponse(workspace.getTitle(), workspace.getId().toString(), workspace.getCreatedAt());
+        return new WorkspaceHistoryResponse(workspace.getTitle(), workspace.getId(), workspace.getCreatedAt());
     }
 
-    public WorkspaceDetailResponse toWorkspaceDetailResponse(Workspace workspace, List<Object> chats) {
-        return new WorkspaceDetailResponse(workspace.getId().toString(), workspace.getLlmId(), workspace.getUserId(), workspace.getTitle(), workspace.getMcps(), chats);
+    public WorkspaceDetailResponse toWorkspaceDetailResponse(Workspace workspace, List<Chat> chats) {
+        List<Object> chatObjects = chats.stream()
+                .map(chat -> (Object) chat)
+                .toList();
+        return new WorkspaceDetailResponse(workspace.getId(), workspace.getLlmId(), workspace.getUserId(), workspace.getTitle(), workspace.getMcps(), chatObjects);
     }
 
     public WorkspaceUpdateResponse toWorkspaceUpdateResponse(Workspace workspace) {
-        return new WorkspaceUpdateResponse(workspace.getId().toString(), workspace.getTitle(), workspace.getUpdatedAt());
+        return new WorkspaceUpdateResponse(workspace.getId(), workspace.getTitle(), workspace.getUpdatedAt());
     }
 
     public WorkspaceChatResponse toWorkspaceChatResponse(String workspaceId, JsonNode llmResponse) {

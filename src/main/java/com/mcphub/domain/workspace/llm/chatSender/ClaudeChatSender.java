@@ -3,6 +3,7 @@ package com.mcphub.domain.workspace.llm.chatSender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import org.apache.commons.collections4.ListUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -37,7 +38,7 @@ public class ClaudeChatSender implements ChatSender{
         requestBody.put("messages", messages);
 
         JSONArray mcp_servers = new JSONArray();
-        for (McpUrlTokenPair mcpUrlTokenPair : mcpUrlTokenList) {
+        for (McpUrlTokenPair mcpUrlTokenPair : ListUtils.emptyIfNull(mcpUrlTokenList)) {
             JSONObject mcp_server = new JSONObject();
             mcp_server.put("type", "url");
             mcp_server.put("url", mcpUrlTokenPair.url());

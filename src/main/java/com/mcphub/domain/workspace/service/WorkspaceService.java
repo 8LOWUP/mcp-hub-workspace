@@ -31,5 +31,7 @@ public interface WorkspaceService {
 
     Chat createChat(String workspaceId, String chatMessage, boolean isRequest);
 
+    List<Chat> getAllChats(String workspaceId);
+
     Page<Chat> getChats(String workspaceId, int count);
 }

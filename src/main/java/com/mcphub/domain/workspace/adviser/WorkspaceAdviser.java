@@ -67,9 +67,9 @@ public class WorkspaceAdviser {
 
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
 
-        // TODO: 해당 워크스페이스의 채팅 목록 조회
+        List<Chat> chats = workspaceService.getAllChats(workspaceId);
 
-        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId.toString()), null); // TODO: 채팅 목록 객체 넣기
+        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId.toString()), chats); // TODO: 채팅 목록 객체 넣기
     }
 
     public WorkspaceUpdateResponse updateWorkspaceName(String workspaceId, WorkspaceUpdateRequest request) {
