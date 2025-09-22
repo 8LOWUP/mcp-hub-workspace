@@ -149,16 +149,22 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
+    @Transactional
     public Chat createChat(String workspaceId, String chatMessage, boolean isRequest) {
+        if(!workspaceMongoRepository.existsById(workspaceId))
+            throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_NOT_FOUND);
+
         Chat chat = Chat.builder()
                 .workspaceId(workspaceId)
                 .chat(chatMessage)
                 .isRequest(isRequest)
                 .build();
+
         return chatMongoRepository.save(chat);
     }
 
     @Override
+    @Transactional
     public Page<Chat> getChats(String workspaceId, int count) {
         return chatMongoRepository.findByWorkspaceIdOrderByCreatedAtDesc(workspaceId, PageRequest.of(0, count));
     }

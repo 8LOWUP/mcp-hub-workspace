@@ -19,6 +19,7 @@ public enum WorkspaceErrorStatus implements BaseCodeInterface {
 
     DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER001", "DB 저장중 문제 발생. RollBack 됩니다."),
 
+    CHAT_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CHAT001", "LLM으로부터 답변을 받는데 실패했습니다.")
     ;
 
     private final HttpStatus httpStatus;
