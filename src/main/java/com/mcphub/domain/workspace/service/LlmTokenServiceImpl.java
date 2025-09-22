@@ -7,10 +7,10 @@ import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.LlmTokenMongoRepository;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
