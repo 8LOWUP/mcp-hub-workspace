@@ -10,6 +10,6 @@ import java.util.List;
 public record WorkspaceCreateRequest(
         Llm llmId,
         List<McpInfo> mcps,
-        String chatRequest
+        String chatMessage
 ) {
 }

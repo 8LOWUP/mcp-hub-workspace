@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class WorkspaceConverter {
 
-    public WorkspaceCreateResponse toWorkspaceCreateResponse(Workspace workspace, String response) {
+    public WorkspaceCreateResponse toWorkspaceCreateResponse(Workspace workspace, JsonNode response) {
         return new WorkspaceCreateResponse(workspace.getUserId(), workspace.getId(), workspace.getLlmId(), workspace.getMcps(), response, workspace.getTitle(), workspace.getCreatedAt());
     }
 
@@ -60,5 +60,9 @@ public class WorkspaceConverter {
         sb.append("\n이어서 답변해 주세요.\n");
         sb.append(chatMessage);
         return sb.toString();
+    }
+
+    public String toWorkspaceNameRequestMessage(String requestMessage, String responseMessage) {
+        return "다음 두 개의 메시지를 보고 적절한 채팅방 이름을 정해줘. 답변은 채팅방 이름만" + "\n" + "사용자: " + requestMessage + "\n" + "응답: " +responseMessage;
     }
 }

@@ -15,4 +15,6 @@ public interface WorkspaceMongoRepository extends MongoRepository<Workspace, Str
     List<Workspace> findByUserIdAndDeletedAtOrderByCreatedAtDesc(String userId, LocalDateTime deletedAt);
 
     boolean existsById(@NotNull String workspaceId);
+
+    Optional<Workspace> findTopByUserIdOrderByCreatedAtDesc(String userId);
 }

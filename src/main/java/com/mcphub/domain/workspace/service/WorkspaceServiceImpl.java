@@ -7,6 +7,7 @@ import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
+import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.ChatMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.UserMcpMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.WorkspaceMongoRepository;
@@ -18,8 +19,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,42 +42,35 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional
-    public Workspace createWorkspace(WorkspaceCreateRequest request, String userId, String workspaceName) {
-
+    public Workspace createWorkspace(String userId, WorkspaceCreateRequest request) {
         // request 관련 에러 처리
-        if (request.llmId() == null
-                || request.mcps().isEmpty()
-                || userId.isEmpty()
-                || workspaceName.isEmpty())
+        if (userId.isEmpty())
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
 
-        // MCP 개수가 허용치를 초과할 경우 Exception
-        if (request.mcps().size() > MCP_TOLERANCE_NUMBER)
-            throw new RestApiException(WorkspaceErrorStatus.MCP_NUMBER_TOLERANCE_EXCEEDED);
+        Optional<Workspace> recentWorkspaceOpt = workspaceMongoRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+        Llm llmId = null;
+        List<McpInfo> mcps = null;
+
+        if (recentWorkspaceOpt.isPresent()) {
+            // 이전 워크스페이스가 존재하는 경우
+            Workspace recentWorkspace = recentWorkspaceOpt.get();
+            llmId = recentWorkspace.getLlmId();
+            mcps = recentWorkspace.getMcps();
+        } else {
+            // 이전 워크스페이스가 존재하지 않는 경우
+            if (request.llmId() == null || request.mcps().isEmpty())
+                throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
+
+            llmId = request.llmId();
+            mcps = request.mcps();
+        }
 
         return workspaceMongoRepository.save(Workspace.builder()
-                .llmId(request.llmId())
+                .llmId(llmId)
                 .userId(userId)
-                .mcps(request.mcps())
-                .title(workspaceName)
+                .mcps(mcps)
+                .title(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build());
-    }
-
-    @Override
-    @Transactional
-    public Workspace createWorkspaceByRecentWorkspace(Workspace recentWorkspace, String userId, String workspaceName) {
-        // request 관련 에러 처리
-        if (userId.isEmpty()) throw new RestApiException(WorkspaceErrorStatus.USER_ID_NOT_FOUND_IN_TOKEN);
-        if (recentWorkspace.getLlmId() == null
-                || recentWorkspace.getMcps().isEmpty()
-                || workspaceName.isEmpty())
-            throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
-
-        return workspaceMongoRepository.save(Workspace.builder()
-                .llmId(recentWorkspace.getLlmId())
-                .userId(userId)
-                .mcps(recentWorkspace.getMcps())
-                .title(workspaceName).build());
     }
 
     @Override

@@ -40,21 +40,36 @@ public class WorkspaceAdviser {
     private final int DEFAULT_PREVIOUS_CHATS = 5;
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
+        String userId = securityUtils.getUserId().toString(); // 토큰에서 userId 가져오기
+        Workspace createdWorkspace = workspaceService.createWorkspace(userId, request);
 
-        Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
-        Workspace createdWorkspace = null;
+        // 채팅 요청
+        workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
+        List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
+        LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
+        JsonNode chatResponse = chatSenderManager.getResponse(
+                llmTokenDto.llmId(),
+                llmTokenDto.llmToken(),
+                mcpUrlTokenPairs,
+                request.chatMessage());
+        workspaceService.createChat(createdWorkspace.getId(), chatResponse.toString(), false);
 
-        // TODO: ChatService의 채팅 메서드 호출해서, LLM 응답과 요약 제목 가져오기 (_id 이용해서 Chat에 저장되도록 하기)
-        String workspaceName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); // TODO: default 제목
-        String response = "응답에 문제가 발생했습니다. 다시 질문해주세요."; // TODO: default 응답
+        // LLM을 이용해 채팅방 제목 생성 & 업데이트
+        String requestMessage = workspaceConverter.toWorkspaceNameRequestMessage(request.chatMessage(), chatResponse.toString());
+        String workspaceName = chatSenderManager
+                .getResponse(llmTokenDto.llmId(), llmTokenDto.llmToken(), null, requestMessage)
+                .toString()
+                .replace("\"", "");
+        WorkspaceUpdateRequest updateRequest = WorkspaceUpdateRequest
+                .builder()
+                .title(workspaceName)
+                .build();
+        Workspace updatedWorkspace = workspaceService.updateWorkspace(
+                updateRequest,
+                createdWorkspace.getId(),
+                userId);
 
-        // 가장 최근의 워크스페이스 조회
-        Workspace recentWorkspace = workspaceService.findRecentWorkspaceByUserId(userId.toString());
-        // 최초 워크스페이스 생성이라면, request 로부터 설정값을 받아서 생성
-        // 기존에 워크스페이스가 존재했다면, 가장 최근의 워크스페이스 설정을 참조해서 생성
-        return Objects.isNull(recentWorkspace) ?
-                workspaceConverter.toWorkspaceCreateResponse(workspaceService.createWorkspace(request, userId.toString(), workspaceName), response)
-                : workspaceConverter.toWorkspaceCreateResponse(workspaceService.createWorkspaceByRecentWorkspace(recentWorkspace, userId.toString(), workspaceName), response);
+        return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
     }
 
     public List<WorkspaceHistoryResponse> getWorkspaceHistory() {
@@ -107,7 +122,6 @@ public class WorkspaceAdviser {
         //이전 채팅 기록 가져오기
         Page<Chat> chatList = workspaceService.getChats(workspaceId, DEFAULT_PREVIOUS_CHATS);
         String prompt = workspaceConverter.toPrompt(chatList, request.chatMessage());
-        log.info(prompt);
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
         JsonNode llmResponse = chatSenderManager.getResponse(
