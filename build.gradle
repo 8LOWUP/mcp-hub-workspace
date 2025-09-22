@@ -43,6 +43,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'org.testcontainers:mysql'
 
+    //Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
 	// 스프링 시큐리티를 사용하기 위한 스타터 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
