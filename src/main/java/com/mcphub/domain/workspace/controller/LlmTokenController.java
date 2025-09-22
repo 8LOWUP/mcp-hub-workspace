@@ -29,8 +29,8 @@ public class LlmTokenController {
             )
     })
     @GetMapping(path = "/token")
-    public BaseResponse<LlmTokenListResponse> getToken() {
-        return BaseResponse.onSuccess(llmTokenAdviser.getToken());
+    public BaseResponse<LlmTokenListResponse> getAllToken() {
+        return BaseResponse.onSuccess(llmTokenAdviser.getAllToken());
     }
 
     @Operation(summary = "사용자 LLM Token 입력 API", description = "사용자의 LLM Token을 입력받아 저장하는 API 입니다")

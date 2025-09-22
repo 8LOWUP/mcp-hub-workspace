@@ -8,11 +8,13 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Llm extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

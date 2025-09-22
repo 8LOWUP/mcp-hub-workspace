@@ -1,6 +1,7 @@
 package com.mcphub.domain.workspace.entity;
 
 import com.mcphub.domain.workspace.common.McpInfo;
+import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.global.common.base.BaseDocument;
 import jakarta.persistence.EntityListeners;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class Workspace extends BaseDocument implements Persistable<String> {
 
     @Id
     private String id;
-    private String llmId;   // bigint -> String
+    private Llm llmId;   // bigint -> String
     private String userId;  // bigint -> String
     private String title;   // text
 

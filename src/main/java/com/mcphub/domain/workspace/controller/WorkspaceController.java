@@ -1,16 +1,17 @@
 package com.mcphub.domain.workspace.controller;
 
 import com.mcphub.domain.workspace.adviser.WorkspaceAdviser;
+import com.mcphub.domain.workspace.dto.request.WorkspaceChatRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
-import com.mcphub.domain.workspace.dto.response.WorkspaceCreateResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceDetailResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceHistoryResponse;
-import com.mcphub.domain.workspace.dto.response.WorkspaceUpdateResponse;
+import com.mcphub.domain.workspace.dto.response.*;
+import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -98,4 +99,16 @@ public class WorkspaceController {
         return BaseResponse.onFailure(Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value()), "요청에 실패하였습니다.", null);
     }
 
+    @Operation(summary = "채팅 요청 API", description = "채팅 요청을 보내고 결과를 받는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "채팅 요청 성공")
+    })
+    @Parameters({
+            @Parameter(name = "chatMessage", description = "채팅 내용"),
+    })
+    @PostMapping(path = "/{workspaceId}/chats")
+    public BaseResponse<WorkspaceChatResponse> sendChat(
+            @PathVariable("workspaceId") String workspaceId,
+            @RequestBody WorkspaceChatRequest request
+    ) { return BaseResponse.onSuccess(workspaceAdviser.sendChat(workspaceId, request));}
 }
