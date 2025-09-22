@@ -108,7 +108,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Chat> deletedChats = chatMongoRepository.findByWorkspaceId(workspaceId);
         for (Chat deletedChat: deletedChats) {
             deletedChat.delete();
-            chatMongoRepository.delete(deletedChat);
+            chatMongoRepository.save(deletedChat);
         }
 
         return workspaceMongoRepository.save(deletedWorkspace).isDeleted();
