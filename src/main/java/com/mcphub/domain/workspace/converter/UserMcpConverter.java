@@ -2,6 +2,8 @@ package com.mcphub.domain.workspace.converter;
 
 import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenGetResponse;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenUpdateResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import org.springframework.stereotype.Component;
@@ -38,5 +40,18 @@ public class UserMcpConverter {
                 })
                 .filter(Objects::nonNull) // INNER JOIN 방식
                 .collect(Collectors.toList());
+    }
+
+    public UserMcpTokenGetResponse toUserMcpTokenGetResponse(UserMcp userMcp) {
+        return UserMcpTokenGetResponse.builder()
+                .mcpId(userMcp.getMcpId())
+                .token(userMcp.getMcpToken())
+                .build();
+    }
+
+    public UserMcpTokenUpdateResponse toUserMcpTokenUpdateResponse(UserMcp userMcp) {
+        return UserMcpTokenUpdateResponse.builder()
+                .mcpId(userMcp.getMcpId())
+                .build();
     }
 }

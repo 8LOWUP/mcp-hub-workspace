@@ -81,7 +81,7 @@ public class McpConsumer {
         try {
             UrlSaveEvent event = new ObjectMapper().readValue(record.value(), UrlSaveEvent.class);
             log.info("Processing mcp-saved-url: {}", event.toString());
-            // 여기서 URL 저장 로직 수행
+            userMcpAdviser.createAndUpdateMcpUrl(event);
         } catch (Exception e) {
             log.error("Failed to process mcp-saved-url", e);
         }
@@ -94,8 +94,13 @@ public class McpConsumer {
         String messageId = extractMessageId(record);
         if (isDuplicate(messageId)) return;
 
-        log.info("Processing mcp-deleted-url: {}", record.value());
-        // URL 삭제 로직 수행
+        try {
+            UrlSaveEvent event = new ObjectMapper().readValue(record.value(), UrlSaveEvent.class);
+            log.info("Processing mcp-deleted-url: {}", event.toString());
+            userMcpAdviser.deleteMcpUrl(event);
+        } catch (Exception e) {
+            log.error("Failed to process mcp-deleted-url", e);
+        }
     }
 }
 

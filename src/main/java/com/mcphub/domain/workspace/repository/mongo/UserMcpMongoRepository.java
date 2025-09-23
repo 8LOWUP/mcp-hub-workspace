@@ -3,8 +3,10 @@ package com.mcphub.domain.workspace.repository.mongo;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
+
 public interface UserMcpMongoRepository extends MongoRepository<UserMcp, String> {
-    UserMcp findByUserIdAndMcpId(String userId, String mcpId);
+    Optional<UserMcp> findByUserIdAndMcpId(String userId, String mcpId);
     boolean existsByMcpIdAndUserId(String mcpId, String userId);
     UserMcp deleteByMcpIdAndUserId(String userId, String mcpId);
 }
