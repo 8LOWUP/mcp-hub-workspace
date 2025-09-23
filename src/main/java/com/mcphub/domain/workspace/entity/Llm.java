@@ -1,6 +1,6 @@
 package com.mcphub.domain.workspace.entity;
 
-import com.mcphub.global.common.base.BaseEntity;
+import com.mcphub.global.common.base.BaseDocument;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Llm extends BaseEntity {
+public class Llm extends BaseDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
