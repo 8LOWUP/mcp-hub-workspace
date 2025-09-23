@@ -4,11 +4,10 @@ import com.mcphub.global.common.base.BaseResponse;
 import com.mcphub.global.common.exception.code.BaseCodeDto;
 import com.mcphub.global.common.exception.code.status.GlobalErrorStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
+//import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,10 +47,11 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
      * ConstraintViolationException 발생 시 예외 처리
      * 메서드 파라미터, 또는 메서드 리턴 값에 문제가 있을 경우, @Validated 검증 실패한 경우
      */
-    @ExceptionHandler
-    public ResponseEntity<BaseResponse<String>> handleConstraintViolationException(ConstraintViolationException e) {
-        return handleExceptionInternal(GlobalErrorStatus._VALIDATION_ERROR.getCode());
-    }
+    // Mysql을 사용하지 않으므로, 임시 주석 처리
+//    @ExceptionHandler
+//    public ResponseEntity<BaseResponse<String>> handleConstraintViolationException(ConstraintViolationException e) {
+//        return handleExceptionInternal(GlobalErrorStatus._VALIDATION_ERROR.getCode());
+//    }
 
     /*
      * MethodArgumentTypeMismatchException 발생 시 예외 처리
