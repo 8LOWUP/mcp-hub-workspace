@@ -4,6 +4,7 @@ import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.converter.UserMcpConverter;
 import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.service.UserMcpService;
@@ -28,5 +29,13 @@ public class UserMcpAdviser {
 
         //McpUrl, UserMcp로 McpUrlTokenPair 생성
         return userMcpConverter.toMcpUrlTokenPariList(userMcpList, mcpUrlList);
+    }
+
+    public void createUserMcp(McpSaveEvent mcpSaveEvent) {
+        userMcpService.createUserMcp(mcpSaveEvent);
+    }
+
+    public void deleteUserMcp(McpSaveEvent mcpSaveEvent) {
+        userMcpService.deleteUserMcp(mcpSaveEvent);
     }
 }

@@ -1,6 +1,7 @@
 package com.mcphub.domain.workspace.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mcphub.domain.workspace.adviser.UserMcpAdviser;
 import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.time.Duration;
 public class McpConsumer {
 
     private final StringRedisTemplate redisTemplate;
+    private final UserMcpAdviser userMcpAdviser;
     private static final String MESSAGE_KEY_PREFIX = "kafka:msg:";
 
     private boolean isDuplicate(String messageId) {
@@ -48,7 +50,7 @@ public class McpConsumer {
         try {
             McpSaveEvent event = new ObjectMapper().readValue(record.value(), McpSaveEvent.class);
             log.info("Processing user-saved-mcp: {}", event.toString());
-            // 여기에 저장 로직
+            userMcpAdviser.createUserMcp(event);
         } catch (Exception e) {
             log.error("Failed to process user-saved-mcp", e);
         }
@@ -63,7 +65,7 @@ public class McpConsumer {
         try {
             McpSaveEvent event = new ObjectMapper().readValue(record.value(), McpSaveEvent.class);
             log.info("Processing user-deleted-mcp: {}", event.toString());
-            // 여기서 삭제 로직 수행
+            userMcpAdviser.deleteUserMcp(event);
         } catch (Exception e) {
             log.error("Failed to process user-deleted-mcp", e);
         }

@@ -5,4 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserMcpMongoRepository extends MongoRepository<UserMcp, String> {
     UserMcp findByUserIdAndMcpId(String userId, String mcpId);
+    boolean existsByMcpIdAndUserId(String mcpId, String userId);
+    UserMcp deleteByMcpIdAndUserId(String userId, String mcpId);
 }

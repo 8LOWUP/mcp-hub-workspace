@@ -2,6 +2,7 @@ package com.mcphub.domain.workspace.service;
 
 import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.McpId;
+import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.repository.mongo.McpUrlMongoRepository;
@@ -42,4 +43,27 @@ public class UserMcpServiceImpl implements UserMcpService {
         }
         return mcpUrlList;
     }
+
+    @Override
+    @Transactional
+    public UserMcp createUserMcp(McpSaveEvent mcpSaveEvent) {
+        if(mcpSaveEvent.getMcpId() == null || mcpSaveEvent.getUserId() == null){
+
+        }
+        UserMcp userMcp = UserMcp.builder()
+                .mcpId(mcpSaveEvent.getMcpId().toString())
+                .userId(mcpSaveEvent.getUserId().toString())
+                .build();
+        return userMcpMongoRepository.save(userMcp);
+    }
+
+    @Override
+    public UserMcp deleteUserMcp(McpSaveEvent mcpSaveEvent) {
+        if(!userMcpMongoRepository.existsByMcpIdAndUserId(mcpSaveEvent.getMcpId().toString(), mcpSaveEvent.getUserId().toString())){
+
+        }
+        return userMcpMongoRepository.deleteByMcpIdAndUserId(mcpSaveEvent.getMcpId().toString(), mcpSaveEvent.getUserId().toString());
+    }
+
+
 }
