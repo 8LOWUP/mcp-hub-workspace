@@ -7,6 +7,7 @@ import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenGetResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenUpdateResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
@@ -37,18 +38,23 @@ public class UserMcpAdviser {
         return userMcpConverter.toMcpUrlTokenPariList(userMcpList, mcpUrlList);
     }
 
-    public UserMcpTokenGetResponse getUserMcpToken(String mcpId) {
+    public UserMcpTokenGetResponse getUserMcpToken(String platformId) {
         String userId = securityUtils.getUserId().toString();
 
-        UserMcp userMcp = userMcpService.getUserMcpToken(userId, mcpId);
+        UserMcp userMcp = userMcpService.getUserMcpToken(userId, platformId);
         return userMcpConverter.toUserMcpTokenGetResponse(userMcp);
     }
 
-    public UserMcpTokenUpdateResponse updateUserMcpToken(String mcpId, UserMcpTokenUpdateRequest request) {
+    public UserMcpTokenUpdateResponse updateUserMcpToken(String platformId, UserMcpTokenUpdateRequest request) {
         String userId = securityUtils.getUserId().toString();
 
-        UserMcp userMcp = userMcpService.updateUserMcpToken(userId, mcpId, request);
+        UserMcp userMcp = userMcpService.updateUserMcpToken(userId, platformId, request);
         return userMcpConverter.toUserMcpTokenUpdateResponse(userMcp);
+    }
+
+    public UserMcpTokenCheckResponse checkUserMcpToken(String mcpId) {
+        String userId = securityUtils.getUserId().toString();
+        return userMcpConverter.toUserMcpCheckResponse(userMcpService.checkUserMcpToken(userId, mcpId));
     }
 
     public void createUserMcp(McpSaveEvent mcpSaveEvent) {
@@ -61,6 +67,9 @@ public class UserMcpAdviser {
 
     public void createAndUpdateMcpUrl(UrlSaveEvent urlSaveEvent) { userMcpService.createOrUpdateMcpUrl(urlSaveEvent); }
 
-    public void deleteMcpUrl(UrlSaveEvent urlSaveEvent) { userMcpService.deleteMcpUrl(urlSaveEvent); }
+    public void deleteMcpUrl(UrlSaveEvent urlSaveEvent) {
+        userMcpService.deleteUserMcpByMcpId(urlSaveEvent.getMcpId().toString());
+        userMcpService.deleteMcpUrl(urlSaveEvent);
+    }
 
 }

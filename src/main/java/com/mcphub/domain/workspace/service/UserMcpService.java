@@ -13,11 +13,13 @@ import java.util.List;
 public interface UserMcpService {
     List<UserMcp> getUserMcpListByMcpInfoList(String userId, List<McpInfo> mcpInfoList);
     List<McpUrl> getMcpUrlListByMcpIdList(List<McpId> mcpIdList);
-    UserMcp getUserMcpToken(String userId, String mcpId);
-    UserMcp updateUserMcpToken(String userId, String mcpId, UserMcpTokenUpdateRequest userMcpTokenUpdateRequest);
+    UserMcp getUserMcpToken(String userId, String platformId);
+    UserMcp updateUserMcpToken(String userId, String platformId, UserMcpTokenUpdateRequest userMcpTokenUpdateRequest);
+    Boolean checkUserMcpToken(String userId, String mcpId);
 
     UserMcp createUserMcp(McpSaveEvent mcpSaveEvent);
     UserMcp deleteUserMcp(McpSaveEvent mcpSaveEvent);
+    List<UserMcp> deleteUserMcpByMcpId(String mcpId);
     McpUrl createOrUpdateMcpUrl(UrlSaveEvent urlSaveEvent);
     McpUrl deleteMcpUrl(UrlSaveEvent urlSaveEvent);
 }

@@ -2,6 +2,7 @@ package com.mcphub.domain.workspace.controller;
 
 import com.mcphub.domain.workspace.adviser.UserMcpAdviser;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenGetResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenUpdateResponse;
 import com.mcphub.global.common.base.BaseResponse;
@@ -23,9 +24,9 @@ public class UserMcpController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "MCP 토큰 조회 성공")
     })
-    @GetMapping("/token/{mcpId}")
+    @GetMapping("/token/{platformId}")
     public BaseResponse<UserMcpTokenGetResponse> getUserMcpToken(
-            @PathVariable("mcpId") String mcpId
+            @PathVariable("platformId") String mcpId
     ) {
         return BaseResponse.onSuccess(userMcpAdviser.getUserMcpToken(mcpId));
     }
@@ -34,11 +35,22 @@ public class UserMcpController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "MCP 토큰 저장 성공")
     })
-    @PostMapping("/token/{mcpId}")
+    @PostMapping("/token/{platformId}")
     public BaseResponse<UserMcpTokenUpdateResponse> updateUserMcpToken(
-            @PathVariable("mcpId") String mcpId,
+            @PathVariable("platformId") String mcpId,
             @RequestBody UserMcpTokenUpdateRequest request
     ) {
         return BaseResponse.onSuccess(userMcpAdviser.updateUserMcpToken(mcpId, request));
+    }
+
+    @Operation(summary = "MCP 토큰 존재 여부 확인 API", description = "사용자의 MCP 토큰이 이미 등록된지 확인하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "요청 성공")
+    })
+    @GetMapping("/token/check/{mcpId}")
+    public BaseResponse<UserMcpTokenCheckResponse> checkUserMcpToken(
+            @PathVariable("mcpId") String mcpId
+    ) {
+        return BaseResponse.onSuccess(userMcpAdviser.checkUserMcpToken(mcpId));
     }
 }

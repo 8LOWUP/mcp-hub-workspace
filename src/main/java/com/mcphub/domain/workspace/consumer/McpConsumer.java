@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+/*
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -103,4 +104,5 @@ public class McpConsumer {
         }
     }
 }
+*/
 

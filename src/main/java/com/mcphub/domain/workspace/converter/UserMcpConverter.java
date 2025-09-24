@@ -2,6 +2,7 @@ package com.mcphub.domain.workspace.converter;
 
 import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenGetResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenUpdateResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
@@ -44,14 +45,20 @@ public class UserMcpConverter {
 
     public UserMcpTokenGetResponse toUserMcpTokenGetResponse(UserMcp userMcp) {
         return UserMcpTokenGetResponse.builder()
-                .mcpId(userMcp.getMcpId())
+                .platformId(userMcp.getPlatformId())
                 .token(userMcp.getMcpToken())
                 .build();
     }
 
     public UserMcpTokenUpdateResponse toUserMcpTokenUpdateResponse(UserMcp userMcp) {
         return UserMcpTokenUpdateResponse.builder()
-                .mcpId(userMcp.getMcpId())
+                .platformId(userMcp.getPlatformId())
+                .build();
+    }
+
+    public UserMcpTokenCheckResponse toUserMcpCheckResponse(Boolean result) {
+        return UserMcpTokenCheckResponse.builder()
+                .isTokenExist(result)
                 .build();
     }
 }

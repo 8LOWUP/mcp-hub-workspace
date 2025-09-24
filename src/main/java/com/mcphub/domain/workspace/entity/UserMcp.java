@@ -17,6 +17,7 @@ public class UserMcp extends BaseDocument implements Persistable<String> {
     private String id;
     private String userId;
     private String mcpId;
+    private String platformId;
     private String mcpToken;
 
     @Override

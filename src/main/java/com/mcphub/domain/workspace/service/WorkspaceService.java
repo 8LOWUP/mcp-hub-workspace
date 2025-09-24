@@ -33,4 +33,6 @@ public interface WorkspaceService {
     List<Chat> getAllChats(String workspaceId);
 
     Page<Chat> getChats(String workspaceId, int count);
+
+    List<Workspace> deleteMcpInfoByMcpId(String mcpId);
 }
