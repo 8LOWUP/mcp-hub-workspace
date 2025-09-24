@@ -55,10 +55,4 @@ public class UserMcpConverter {
                 .platformId(userMcp.getPlatformId())
                 .build();
     }
-
-    public UserMcpTokenCheckResponse toUserMcpCheckResponse(Boolean result) {
-        return UserMcpTokenCheckResponse.builder()
-                .isTokenExist(result)
-                .build();
-    }
 }

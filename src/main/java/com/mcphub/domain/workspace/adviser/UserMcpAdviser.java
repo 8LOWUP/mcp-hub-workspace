@@ -54,7 +54,7 @@ public class UserMcpAdviser {
 
     public UserMcpTokenCheckResponse checkUserMcpToken(String mcpId) {
         String userId = securityUtils.getUserId().toString();
-        return userMcpConverter.toUserMcpCheckResponse(userMcpService.checkUserMcpToken(userId, mcpId));
+        return userMcpService.checkUserMcpToken(userId, mcpId);
     }
 
     public void createUserMcp(McpSaveEvent mcpSaveEvent) {

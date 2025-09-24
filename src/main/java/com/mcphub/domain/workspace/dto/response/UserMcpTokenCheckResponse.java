@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record UserMcpTokenCheckResponse(
+        String platformId,
         boolean isTokenExist
 ) {
 }

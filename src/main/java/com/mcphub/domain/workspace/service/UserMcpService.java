@@ -5,6 +5,7 @@ import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
 
@@ -15,7 +16,7 @@ public interface UserMcpService {
     List<McpUrl> getMcpUrlListByMcpIdList(List<McpId> mcpIdList);
     UserMcp getUserMcpToken(String userId, String platformId);
     UserMcp updateUserMcpToken(String userId, String platformId, UserMcpTokenUpdateRequest userMcpTokenUpdateRequest);
-    Boolean checkUserMcpToken(String userId, String mcpId);
+    UserMcpTokenCheckResponse checkUserMcpToken(String userId, String mcpId);
 
     UserMcp createUserMcp(McpSaveEvent mcpSaveEvent);
     UserMcp deleteUserMcp(McpSaveEvent mcpSaveEvent);

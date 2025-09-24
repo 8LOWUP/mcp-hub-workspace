@@ -5,6 +5,7 @@ import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
 import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
+import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.repository.mongo.McpUrlMongoRepository;
@@ -80,7 +81,8 @@ public class UserMcpServiceImpl implements UserMcpService {
     }
 
     @Override
-    public Boolean checkUserMcpToken(String userId, String mcpId) {
+    @Transactional
+    public UserMcpTokenCheckResponse checkUserMcpToken(String userId, String mcpId) {
         UserMcp userMcp = userMcpMongoRepository.findByUserIdAndMcpId(userId, mcpId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         String platformId = userMcp.getPlatformId();
 
@@ -99,7 +101,10 @@ public class UserMcpServiceImpl implements UserMcpService {
             }
         }
 
-        return result;
+        return UserMcpTokenCheckResponse.builder()
+                .platformId(platformId)
+                .isTokenExist(result)
+                .build();
     }
 
     @Override
