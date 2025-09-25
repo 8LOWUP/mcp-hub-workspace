@@ -1,9 +1,9 @@
-name: MCP Hub workspace service - Develop Deploy
+name: MCP Hub workspace service - Prod Deploy
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   build-and-deploy:
