@@ -2,8 +2,6 @@ package com.mcphub.domain.workspace.service;
 
 import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.McpId;
-import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
-import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.entity.McpUrl;
@@ -105,56 +103,5 @@ public class UserMcpServiceImpl implements UserMcpService {
                 .platformId(platformId)
                 .isTokenExist(result)
                 .build();
-    }
-
-    @Override
-    @Transactional
-    public UserMcp createUserMcp(McpSaveEvent mcpSaveEvent) {
-        if(mcpSaveEvent.getMcpId() == null || mcpSaveEvent.getUserId() == null){
-
-        }
-        UserMcp userMcp = UserMcp.builder()
-                .mcpId(mcpSaveEvent.getMcpId().toString())
-                .userId(mcpSaveEvent.getUserId().toString())
-                .build();
-        return userMcpMongoRepository.save(userMcp);
-    }
-
-    @Override
-    @Transactional
-    public UserMcp deleteUserMcp(McpSaveEvent mcpSaveEvent) {
-        if(!userMcpMongoRepository.existsByMcpIdAndUserId(mcpSaveEvent.getMcpId().toString(), mcpSaveEvent.getUserId().toString())){
-
-        }
-        return userMcpMongoRepository.deleteByMcpIdAndUserId(mcpSaveEvent.getMcpId().toString(), mcpSaveEvent.getUserId().toString());
-    }
-
-    @Override
-    @Transactional
-    public List<UserMcp> deleteUserMcpByMcpId(String mcpId) {
-        return userMcpMongoRepository.deleteByMcpId(mcpId);
-    }
-
-    @Override
-    @Transactional
-    public McpUrl createOrUpdateMcpUrl(UrlSaveEvent urlSaveEvent) {
-        String mcpId = urlSaveEvent.getMcpId().toString();
-        McpUrl mcpUrl = mcpUrlMongoRepository.findByMcpId(mcpId).orElse(McpUrl.builder()
-                .mcpId(mcpId)
-                .build());
-
-        mcpUrl.setMcpUrl(urlSaveEvent.getUrl());
-
-        return mcpUrlMongoRepository.save(mcpUrl);
-    }
-
-    @Override
-    @Transactional
-    public McpUrl deleteMcpUrl(UrlSaveEvent urlSaveEvent) {
-        McpUrl mcpUrl = mcpUrlMongoRepository.findByMcpId(urlSaveEvent.getMcpId().toString()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.INVALID_MCP_URL));
-
-        mcpUrlMongoRepository.delete(mcpUrl);
-
-        return mcpUrl;
     }
 }

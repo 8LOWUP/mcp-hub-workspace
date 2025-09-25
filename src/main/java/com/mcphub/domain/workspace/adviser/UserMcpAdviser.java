@@ -4,8 +4,6 @@ import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.converter.UserMcpConverter;
 import com.mcphub.domain.workspace.dto.McpId;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
-import com.mcphub.domain.workspace.dto.event.McpSaveEvent;
-import com.mcphub.domain.workspace.dto.event.UrlSaveEvent;
 import com.mcphub.domain.workspace.dto.request.UserMcpTokenUpdateRequest;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenCheckResponse;
 import com.mcphub.domain.workspace.dto.response.UserMcpTokenGetResponse;
@@ -56,20 +54,4 @@ public class UserMcpAdviser {
         String userId = securityUtils.getUserId().toString();
         return userMcpService.checkUserMcpToken(userId, mcpId);
     }
-
-    public void createUserMcp(McpSaveEvent mcpSaveEvent) {
-        userMcpService.createUserMcp(mcpSaveEvent);
-    }
-
-    public void deleteUserMcp(McpSaveEvent mcpSaveEvent) {
-        userMcpService.deleteUserMcp(mcpSaveEvent);
-    }
-
-    public void createAndUpdateMcpUrl(UrlSaveEvent urlSaveEvent) { userMcpService.createOrUpdateMcpUrl(urlSaveEvent); }
-
-    public void deleteMcpUrl(UrlSaveEvent urlSaveEvent) {
-        userMcpService.deleteUserMcpByMcpId(urlSaveEvent.getMcpId().toString());
-        userMcpService.deleteMcpUrl(urlSaveEvent);
-    }
-
 }
