@@ -160,4 +160,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Page<Chat> getChats(String workspaceId, int count) {
         return chatMongoRepository.findByWorkspaceIdOrderByCreatedAtDesc(workspaceId, PageRequest.of(0, count));
     }
+
+    @Override
+    public List<Workspace> deleteMcpInfoByMcpId(String mcpId) {
+        //Query query = new Query();
+        return List.of();
+    }
 }
