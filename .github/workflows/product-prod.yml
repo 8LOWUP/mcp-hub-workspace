@@ -13,9 +13,10 @@ jobs:
     steps:
       - name: Install yq (v4)
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O /usr/bin/yq
-          chmod +x /usr/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
           yq --version
+
 
       # 코드 체크아웃 (서브 묘듈 포함)
       - name: Checkout Code (with submodules)
