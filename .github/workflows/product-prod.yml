@@ -3,7 +3,7 @@ name: MCP Hub workspace service - Develop Deploy
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build-and-deploy:
