@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://repo.spring.io/snapshot' }
     maven {
         name = 'Central Portal Snapshots'
@@ -89,7 +90,7 @@ dependencies {
 	implementation 'com.bucket4j:bucket4j-redis:8.7.1'
 
 	//google gemini
-	implementation 'com.google.genai:google-genai:1.15.0'
+	implementation 'com.google.genai:google-genai:1.18.0'
 
 	//OpenAI
 	implementation 'com.openai:openai-java:3.5.0'
