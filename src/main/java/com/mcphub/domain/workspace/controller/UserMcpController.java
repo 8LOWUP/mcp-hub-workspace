@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User Mcp API", description = "사용자의 MCP Token을 저장하고 수정하는 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mcps")
+@RequestMapping("/workspaces/mcps")
 public class UserMcpController {
     private final UserMcpAdviser userMcpAdviser;
 
