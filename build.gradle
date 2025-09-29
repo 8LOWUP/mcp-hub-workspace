@@ -30,7 +30,6 @@ repositories {
 }
 
 dependencies {
-    implementation platform("org.springframework.ai:spring-ai-bom:1.1.0-M2")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
@@ -102,10 +101,6 @@ dependencies {
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-    implementation 'org.springframework.ai:spring-ai-openai'
-
-    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
 }
 
 tasks.named('test') {

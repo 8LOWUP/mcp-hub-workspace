@@ -13,7 +13,6 @@ import java.util.Map;
 @Service
 public class TokenValidatorManager {
     private final Map<Llm, TokenValidator> validatorMap = Map.of(
-            Llm.GEMINI, new GoogleTokenValidator(),
             Llm.GPT, new OpenAiTokenValidator(),
             Llm.CLAUDE, new AnthropicTokenValidator()
     );
