@@ -34,7 +34,7 @@ public class GeminiChatSender implements ChatSender{
 
 
                 List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
-                HttpClientSseClientTransport transport = HttpClientSseClientTransport.builder(mcpUrlTokenPair.url())
+                HttpClientStreamableHttpTransport transport = HttpClientStreamableHttpTransport.builder(mcpUrlTokenPair.url())
                         .customizeRequest(builder -> builder.header("Authorization", "Bearer " + mcpUrlTokenPair.token()))
                         .build();
                 McpSyncClient mcpSyncClient = McpClient.sync(transport)
