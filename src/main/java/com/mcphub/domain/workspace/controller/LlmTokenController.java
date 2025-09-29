@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "LLM Token API", description = "사용자의 LLM Token을 저장하고 수정하는 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/llm")
+@RequestMapping("/workspaces/llm")
 public class LlmTokenController {
     private final LlmTokenAdviser llmTokenAdviser;
 
