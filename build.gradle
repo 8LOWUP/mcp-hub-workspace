@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://repo.spring.io/snapshot' }
     maven {
         name = 'Central Portal Snapshots'
@@ -29,6 +30,7 @@ repositories {
 }
 
 dependencies {
+    implementation platform("org.springframework.ai:spring-ai-bom:1.1.0-M2")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
@@ -89,7 +91,7 @@ dependencies {
 	implementation 'com.bucket4j:bucket4j-redis:8.7.1'
 
 	//google gemini
-	implementation 'com.google.genai:google-genai:1.15.0'
+	implementation 'com.google.genai:google-genai:1.18.0'
 
 	//OpenAI
 	implementation 'com.openai:openai-java:3.5.0'
@@ -100,6 +102,10 @@ dependencies {
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+    implementation 'org.springframework.ai:spring-ai-openai'
+
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
 }
 
 tasks.named('test') {
