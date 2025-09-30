@@ -26,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/workspaces")
 public class WorkspaceController {
-
     private final WorkspaceAdviser workspaceAdviser;
 
     @Operation(summary = "워크스페이스 생성 API", description = "새로운 워크스페이스 생성에 사용하는 API")

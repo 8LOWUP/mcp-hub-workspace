@@ -13,6 +13,7 @@ import java.util.Map;
 @Service
 public class ChatSenderManager {
     private final Map<Llm, ChatSender> validatorMap = Map.of(
+            Llm.GEMINI, new GeminiChatSender(),
             Llm.GPT, new GptChatSender(),
             Llm.CLAUDE, new ClaudeChatSender()
     );
