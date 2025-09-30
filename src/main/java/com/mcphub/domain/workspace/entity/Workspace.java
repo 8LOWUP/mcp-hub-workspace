@@ -18,7 +18,6 @@ import java.util.List;
 @Setter
 @Builder
 public class Workspace extends BaseDocument implements Persistable<String> {
-
     @Id
     private String id;
     private Llm llmId;   // bigint -> String
