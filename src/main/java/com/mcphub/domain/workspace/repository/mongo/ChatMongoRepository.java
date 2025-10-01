@@ -9,5 +9,7 @@ import java.util.List;
 
 public interface ChatMongoRepository extends MongoRepository<Chat, String> {
     List<Chat> findByWorkspaceId(String workspaceId);
+    Page<Chat> findByWorkspaceId(String workspaceId,
+                                 Pageable pageable);
     Page<Chat> findByWorkspaceIdOrderByCreatedAtDesc(String workspaceId, Pageable pageable);
 }

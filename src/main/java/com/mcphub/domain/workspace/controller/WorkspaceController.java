@@ -16,6 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,4 +114,17 @@ public class WorkspaceController {
             @PathVariable("workspaceId") String workspaceId,
             @RequestBody WorkspaceChatRequest request
     ) { return BaseResponse.onSuccess(workspaceAdviser.sendChat(workspaceId, request));}
+
+    @Operation(summary = "채팅 기록 요청 API", description = "이전 채팅 기록을 받는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "채팅 요청 성공")
+    })
+    @GetMapping(path = "/{workspaceId}/chats")
+    public BaseResponse<Page<WorkspaceChatHistoryResponse>> sendChat(
+            @PathVariable("workspaceId") String workspaceId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return BaseResponse.onSuccess(workspaceAdviser.getChatHistory(workspaceId, pageable));}
 }
