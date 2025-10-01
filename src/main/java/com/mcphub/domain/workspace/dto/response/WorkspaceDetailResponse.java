@@ -10,7 +10,6 @@ public record WorkspaceDetailResponse(
         Llm llmId,
         String userId,
         String title,
-        List<McpInfo> mcps,
-        List<Object> chats // TODO: 채팅 목록 가져올 객체 타입으로 변환 필요
+        List<McpInfo> mcps
 ) {
 }

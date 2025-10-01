@@ -16,6 +16,8 @@ import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -79,12 +81,9 @@ public class WorkspaceAdviser {
     }
 
     public WorkspaceDetailResponse getWorkspaceDetail(String workspaceId) {
-
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
 
-        List<Chat> chats = workspaceService.getAllChats(workspaceId);
-
-        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId.toString()), chats); // TODO: 채팅 목록 객체 넣기
+        return workspaceConverter.toWorkspaceDetailResponse(workspaceService.getWorkspaceDetail(workspaceId, userId.toString()));
     }
 
     public WorkspaceUpdateResponse updateWorkspaceName(String workspaceId, WorkspaceUpdateRequest request) {
@@ -120,7 +119,7 @@ public class WorkspaceAdviser {
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());
 
         //이전 채팅 기록 가져오기
-        Page<Chat> chatList = workspaceService.getChats(workspaceId, DEFAULT_PREVIOUS_CHATS);
+        Page<Chat> chatList = workspaceService.getChatsByCount(workspaceId, DEFAULT_PREVIOUS_CHATS);
         String prompt = workspaceConverter.toPrompt(chatList, request.chatMessage());
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
@@ -134,5 +133,10 @@ public class WorkspaceAdviser {
         workspaceService.createChat(workspaceId, llmResponse.toString(), false);
 
         return workspaceConverter.toWorkspaceChatResponse(workspaceId, llmResponse);
+    }
+
+    public Page<WorkspaceChatHistoryResponse> getChatHistory(String workspaceId, Pageable pageable) {
+        Page<Chat> chats = workspaceService.getChats(workspaceId, pageable);
+        return workspaceConverter.toWorkspaceChatHistoryResponse(chats);
     }
 }

@@ -66,7 +66,7 @@ public class GptChatSender implements ChatSender {
                 node = outputArray.get(outputArray.size() - 1);
                 node = node.get("content").get(0).get("text");
             }
-            return node;
+            return outputArray;
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

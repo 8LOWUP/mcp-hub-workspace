@@ -10,8 +10,10 @@ import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,11 +29,8 @@ public class WorkspaceConverter {
         return new WorkspaceHistoryResponse(workspace.getTitle(), workspace.getId(), workspace.getCreatedAt());
     }
 
-    public WorkspaceDetailResponse toWorkspaceDetailResponse(Workspace workspace, List<Chat> chats) {
-        List<Object> chatObjects = chats.stream()
-                .map(chat -> (Object) chat)
-                .toList();
-        return new WorkspaceDetailResponse(workspace.getId(), workspace.getLlmId(), workspace.getUserId(), workspace.getTitle(), workspace.getMcps(), chatObjects);
+    public WorkspaceDetailResponse toWorkspaceDetailResponse(Workspace workspace) {
+        return new WorkspaceDetailResponse(workspace.getId(), workspace.getLlmId(), workspace.getUserId(), workspace.getTitle(), workspace.getMcps());
     }
 
     public WorkspaceUpdateResponse toWorkspaceUpdateResponse(Workspace workspace) {
@@ -43,6 +42,21 @@ public class WorkspaceConverter {
                 .workspaceId(workspaceId)
                 .llmResponse(llmResponse)
                 .build();
+    }
+
+    public Page<WorkspaceChatHistoryResponse> toWorkspaceChatHistoryResponse(Page<Chat> chats) {
+        // 1. DTO로 변환 후 내부 정렬
+        List<WorkspaceChatHistoryResponse> content = chats.getContent().stream()
+                .sorted(Comparator.comparing(Chat::getCreatedAt))
+                .map(chat -> new WorkspaceChatHistoryResponse(
+                        chat.getChat(),
+                        chat.isRequest(),
+                        chat.getCreatedAt()
+                ))
+                .toList();
+
+        // 2. PageImpl로 감싸서 Page 반환
+        return new PageImpl<>(content, chats.getPageable(), chats.getTotalElements());
     }
 
     public String toPrompt(Page<Chat> chats, String chatMessage) {

@@ -16,6 +16,7 @@ import com.mcphub.global.common.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,13 +152,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional
-    public List<Chat> getAllChats(String workspaceId) {
-        return chatMongoRepository.findByWorkspaceId(workspaceId);
+    public Page<Chat> getChats(String workspaceId, Pageable pageable) {
+        return chatMongoRepository.findByWorkspaceId(workspaceId, pageable);
     }
 
     @Override
     @Transactional
-    public Page<Chat> getChats(String workspaceId, int count) {
+    public Page<Chat> getChatsByCount(String workspaceId, int count) {
         return chatMongoRepository.findByWorkspaceIdOrderByCreatedAtDesc(workspaceId, PageRequest.of(0, count));
     }
 
