@@ -6,6 +6,7 @@ import com.mcphub.domain.workspace.entity.LlmToken;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.LlmTokenMongoRepository;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
+import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.jasypt.encryption.StringEncryptor;
@@ -35,6 +36,9 @@ public class LlmTokenServiceImpl implements LlmTokenService {
     @Transactional
     public LlmToken get(String userId, Llm llmId) {
         LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId);
+        if (llmToken == null) {
+            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
+        }
         llmToken.setToken(stringEncryptor.decrypt(llmToken.getToken()));
 
         return llmToken;

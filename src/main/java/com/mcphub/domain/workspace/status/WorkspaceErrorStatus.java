@@ -18,9 +18,9 @@ public enum WorkspaceErrorStatus implements BaseCodeInterface {
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSPACE404", "워크스페이스를 찾을 수 없습니다."),
     WORKSPACE_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WORKSPACE500", "워크스페이스 생성에 실패했습니다."),
 
-    DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER001", "DB 저장중 문제 발생. RollBack 됩니다."),
+    DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER500", "DB 저장중 문제 발생. RollBack 됩니다."),
 
-    CHAT_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CHAT001", "LLM으로부터 답변을 받는데 실패했습니다.")
+    CHAT_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CHAT500", "LLM으로부터 답변을 받는데 실패했습니다.")
     ;
 
     private final HttpStatus httpStatus;
