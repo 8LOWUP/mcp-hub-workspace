@@ -16,6 +16,7 @@ public enum WorkspaceErrorStatus implements BaseCodeInterface {
     WORKSPACE_PARAMETER_ERROR(HttpStatus.BAD_REQUEST, "WORKSPACE400", "워크스페이스 생성에 필요한 매개변수값이 잘못되었습니다."),
     DELETED_WORKSPACE(HttpStatus.BAD_REQUEST, "WORKSPACE400", "잘못된 워크스페이스를 조회하였습니다."),
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSPACE404", "워크스페이스를 찾을 수 없습니다."),
+    WORKSPACE_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WORKSPACE500", "워크스페이스 생성에 실패했습니다."),
 
     DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER001", "DB 저장중 문제 발생. RollBack 됩니다."),
 
