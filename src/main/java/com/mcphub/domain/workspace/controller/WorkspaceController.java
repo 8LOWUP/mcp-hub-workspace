@@ -106,9 +106,6 @@ public class WorkspaceController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "채팅 요청 성공")
     })
-    @Parameters({
-            @Parameter(name = "chatMessage", description = "채팅 내용"),
-    })
     @PostMapping(path = "/{workspaceId}/chats")
     public BaseResponse<WorkspaceChatResponse> sendChat(
             @PathVariable("workspaceId") String workspaceId,
