@@ -48,12 +48,13 @@ public class LlmTokenController {
             @Parameter(name = "llmId", description = "LLM의 ID 값"),
             @Parameter(name = "llmToken", description = "사용자의 LLM Token값"),
     })
-    @PostMapping(path = "/token")
+    @PostMapping(path = "/token/{llmId}")
     public BaseResponse<LlmTokenSaveResponse> registerToken(
+            @PathVariable("llmId") Llm llmId,
             @RequestBody LlmTokenRequest request
     ) {
 
-        return BaseResponse.onSuccess(llmTokenAdviser.registerToken(request));
+        return BaseResponse.onSuccess(llmTokenAdviser.registerToken(llmId, request));
     }
 
     @Operation(summary = "사용자 LLM Token 수정 API", description = "사용자의 LLM Token을 입력받아 수정하는 API 입니다")
@@ -67,10 +68,11 @@ public class LlmTokenController {
             @Parameter(name = "llmId", description = "LLM의 ID 값"),
             @Parameter(name = "llmToken", description = "사용자의 LLM Token값"),
     })
-    @PatchMapping(path = "/token")
+    @PatchMapping(path = "/token/{llmId}")
     public BaseResponse<LlmTokenSaveResponse> updateToken(
+            @PathVariable("llmId") Llm llmId,
             @RequestBody LlmTokenRequest request
     ) {
-        return BaseResponse.onSuccess(llmTokenAdviser.updateToken(request));
+        return BaseResponse.onSuccess(llmTokenAdviser.updateToken(llmId, request));
     }
 }

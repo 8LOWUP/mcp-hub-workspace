@@ -39,20 +39,20 @@ public class LlmTokenAdviser {
         return llmTokenConverter.toLlmTokenResponse(result);
     }
 
-    public LlmTokenSaveResponse registerToken(LlmTokenRequest request) {
-        tokenValidatorManager.validateToken(request);
+    public LlmTokenSaveResponse registerToken(Llm llmId, LlmTokenRequest request) {
+        tokenValidatorManager.validateToken(llmId, request);
 
         Long userId = securityUtils.getUserId();
-        CreateLlmTokenCommand cmd = llmTokenMapper.toCreateCommand(request, userId.toString());
+        CreateLlmTokenCommand cmd = llmTokenMapper.toCreateCommand(llmId, request, userId.toString());
         LlmToken llmToken = llmTokenService.create(cmd);
         return llmTokenConverter.toLlmTokenSaveResponse(llmToken);
     }
 
-    public LlmTokenSaveResponse updateToken(LlmTokenRequest request)  {
-        tokenValidatorManager.validateToken(request);
+    public LlmTokenSaveResponse updateToken(Llm llmId, LlmTokenRequest request)  {
+        tokenValidatorManager.validateToken(llmId, request);
 
         Long userId = securityUtils.getUserId();
-        UpdateLlmTokenCommand cmd = llmTokenMapper.toUpdateCommand(request, userId.toString());
+        UpdateLlmTokenCommand cmd = llmTokenMapper.toUpdateCommand(llmId, request, userId.toString());
         LlmToken llmToken = llmTokenService.update(cmd);
         return llmTokenConverter.toLlmTokenSaveResponse(llmToken);
     }

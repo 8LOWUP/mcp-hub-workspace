@@ -10,17 +10,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LlmTokenMapper {
-    public CreateLlmTokenCommand toCreateCommand(LlmTokenRequest request, String userId) {
+    public CreateLlmTokenCommand toCreateCommand(Llm llmId, LlmTokenRequest request, String userId) {
         return CreateLlmTokenCommand.builder()
-                .llmId(request.llmId())
+                .llmId(llmId)
                 .llmToken(request.llmToken())
                 .userId(userId)
                 .build();
     }
 
-    public UpdateLlmTokenCommand toUpdateCommand(LlmTokenRequest request, String userId) {
+    public UpdateLlmTokenCommand toUpdateCommand(Llm llmId, LlmTokenRequest request, String userId) {
         return UpdateLlmTokenCommand.builder()
-                .llmId(request.llmId())
+                .llmId(llmId)
                 .llmToken(request.llmToken())
                 .userId(userId)
                 .build();
