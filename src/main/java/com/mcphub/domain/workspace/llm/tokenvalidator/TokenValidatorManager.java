@@ -17,8 +17,8 @@ public class TokenValidatorManager {
             Llm.CLAUDE, new AnthropicTokenValidator()
     );
 
-    public void validateToken(LlmTokenRequest request) {
-        if (validatorMap.getOrDefault(request.llmId(), t -> true).isInvalid(request.llmToken()))
+    public void validateToken(Llm llmId, LlmTokenRequest request) {
+        if (validatorMap.getOrDefault(llmId, t -> true).isInvalid(request.llmToken()))
             throw new RestApiException(LlmErrorStatus.INVALID_LLM_TOKEN);
     }
 }

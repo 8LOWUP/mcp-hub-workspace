@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LlmController {
     private final LlmAdviser llmAdviser;
 
-    @Operation(summary = "사용가능한 모든 LLM 모델을 조회하는 API", description = "사용가능한 모든 LLM 모델을 조회하는 API 입니다")
+    @Operation(summary = "사용가능한 모든 LLM 모델을 조회하는 API", description = "사용가능한 모든 LLM 모델을 조회하는 API 입니다", security = {})
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",

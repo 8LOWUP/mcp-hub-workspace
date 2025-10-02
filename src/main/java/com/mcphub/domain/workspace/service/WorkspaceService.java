@@ -9,6 +9,7 @@ import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -30,9 +31,9 @@ public interface WorkspaceService {
 
     Chat createChat(String workspaceId, String chatMessage, boolean isRequest);
 
-    List<Chat> getAllChats(String workspaceId);
+    Page<Chat> getChats(String workspaceId, Pageable pageable);
 
-    Page<Chat> getChats(String workspaceId, int count);
+    Page<Chat> getChatsByCount(String workspaceId, int count);
 
     List<Workspace> deleteMcpInfoByMcpId(String mcpId);
 }
