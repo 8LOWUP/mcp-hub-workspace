@@ -58,7 +58,7 @@ public class LlmTokenController {
     @Operation(summary = "사용자 LLM Token 수정 API", description = "사용자의 LLM Token을 입력받아 수정하는 API 입니다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "LLM Token 수정 성공", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 LLM 토큰, 이미 존재하는 LLM 토큰", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 LLM 토큰", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
     })
     @Parameters({
             @Parameter(name = "llmId", description = "LLM의 ID 값"),
