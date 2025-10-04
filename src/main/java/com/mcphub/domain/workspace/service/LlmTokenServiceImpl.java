@@ -35,13 +35,15 @@ public class LlmTokenServiceImpl implements LlmTokenService {
 
     @Transactional
     public LlmToken get(String userId, Llm llmId) {
-        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId);
-        if (llmToken == null) {
-            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
-        }
-        llmToken.setToken(stringEncryptor.decrypt(llmToken.getToken()));
-
-        return llmToken;
+        return llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId)
+                .map(token -> {
+                    token.setToken(stringEncryptor.decrypt(token.getToken()));
+                    return token;
+                })
+                .orElse(LlmToken.builder()
+                        .llmId(llmId)
+                        .token(null)
+                        .build());
     }
 
     @Transactional
@@ -61,12 +63,9 @@ public class LlmTokenServiceImpl implements LlmTokenService {
 
     @Transactional
     public LlmToken update(UpdateLlmTokenCommand cmd) {
-        //유저가 등록한 기록이 있는지 확인
-        if(!llmTokenMongoRepository.existsByUserIdAndLlmId(cmd.userId(), cmd.llmId()))
-            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
+        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(cmd.userId(), cmd.llmId())
+                .orElseThrow(() -> new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS));
 
-        //DB 업데이트
-        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(cmd.userId(), cmd.llmId());
         String encryptedToken = stringEncryptor.encrypt(cmd.llmToken());
         llmToken.setToken(encryptedToken);
 
