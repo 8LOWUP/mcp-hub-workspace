@@ -82,7 +82,6 @@ public class WorkspaceAdviser {
     }
 
     public List<WorkspaceHistoryResponse> getWorkspaceHistory() {
-
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
         return workspaceService.getWorkspaceHistory(userId.toString()).stream().map(workspaceConverter::toWorkspaceHistoryResponse).toList();
     }
