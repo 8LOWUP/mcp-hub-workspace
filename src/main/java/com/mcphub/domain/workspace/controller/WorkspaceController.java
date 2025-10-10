@@ -34,7 +34,7 @@ public class WorkspaceController {
     @Operation(summary = "워크스페이스 생성 API", description = "새로운 워크스페이스 생성에 사용하는 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "워크스페이스 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "필수 파라미터가 누락되었습니다.", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "400", description = "토큰을 등록하지 않은 llm에 접근", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "500", description = "워크스페이스 생성에 실패했습니다.", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
     })
     @PostMapping()
