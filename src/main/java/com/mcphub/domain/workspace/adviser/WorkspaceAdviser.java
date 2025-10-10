@@ -75,6 +75,8 @@ public class WorkspaceAdviser {
                     userId);
 
             return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
+        } catch (RestApiException ex) {
+            throw ex;
         } catch (Exception e) {
             workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_CREATION_FAILED);
