@@ -10,17 +10,17 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum WorkspaceErrorStatus implements BaseCodeInterface {
 
-    USER_ID_NOT_FOUND_IN_TOKEN(HttpStatus.BAD_REQUEST, "WORKSPACE400", "토큰에 유저 정보가 없습니다."),
-    MCP_NUMBER_TOLERANCE_EXCEEDED(HttpStatus.BAD_REQUEST, "WORKSPACE400", "워크스페이스 당 허용된 MCP 개수를 초과하였습니다."),
-    MISMATCH_WORKSPACE_AND_USER(HttpStatus.BAD_REQUEST, "WORKSPACE400", "워크스페이스 사용자 정보가 일치하지 않습니다."),
-    WORKSPACE_PARAMETER_ERROR(HttpStatus.BAD_REQUEST, "WORKSPACE400", "워크스페이스 생성에 필요한 매개변수값이 잘못되었습니다."),
-    DELETED_WORKSPACE(HttpStatus.BAD_REQUEST, "WORKSPACE400", "잘못된 워크스페이스를 조회하였습니다."),
-    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSPACE404", "워크스페이스를 찾을 수 없습니다."),
-    WORKSPACE_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WORKSPACE500", "워크스페이스 생성에 실패했습니다."),
+    USER_ID_NOT_FOUND_IN_TOKEN(HttpStatus.BAD_REQUEST, "WORKSPACE001", "토큰에 유저 정보가 없습니다."),
+    MCP_NUMBER_TOLERANCE_EXCEEDED(HttpStatus.BAD_REQUEST, "WORKSPACE002", "워크스페이스 당 허용된 MCP 개수를 초과하였습니다."),
+    MISMATCH_WORKSPACE_AND_USER(HttpStatus.BAD_REQUEST, "WORKSPACE003", "워크스페이스 사용자 정보가 일치하지 않습니다."),
+    WORKSPACE_PARAMETER_ERROR(HttpStatus.BAD_REQUEST, "WORKSPACE004", "워크스페이스 생성에 필요한 매개변수값이 잘못되었습니다."),
+    DELETED_WORKSPACE(HttpStatus.BAD_REQUEST, "WORKSPACE005", "잘못된 워크스페이스를 조회하였습니다."),
+    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSPACE006", "워크스페이스를 찾을 수 없습니다."),
+    WORKSPACE_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WORKSPACE007", "워크스페이스 생성에 실패했습니다."),
 
-    DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER500", "DB 저장중 문제 발생. RollBack 됩니다."),
+    DB_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REGISTER001", "DB 저장중 문제 발생. RollBack 됩니다."),
 
-    CHAT_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CHAT500", "LLM으로부터 답변을 받는데 실패했습니다.")
+    CHAT_REQUEST_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "CHAT001", "LLM으로부터 답변을 받는데 실패했습니다.")
     ;
 
     private final HttpStatus httpStatus;
