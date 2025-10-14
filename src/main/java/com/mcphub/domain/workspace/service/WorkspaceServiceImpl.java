@@ -47,7 +47,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Transactional
     public Workspace createWorkspace(String userId, WorkspaceCreateRequest request) {
         // request 관련 에러 처리
-        if (userId.isEmpty() || request.llmId() == null || request.mcps().isEmpty())
+        if (userId.isEmpty() || request.llmId() == null)
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
 
         return workspaceMongoRepository.save(Workspace.builder()
