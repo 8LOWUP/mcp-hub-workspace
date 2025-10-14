@@ -77,6 +77,7 @@ public class WorkspaceAdviser {
 
             return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
         } catch (RestApiException ex) {
+            workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
             throw ex;
         } catch (Exception e) {
             workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
