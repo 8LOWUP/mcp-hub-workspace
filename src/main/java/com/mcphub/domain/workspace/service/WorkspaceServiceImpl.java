@@ -1,16 +1,13 @@
 package com.mcphub.domain.workspace.service;
 
-import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceLlmUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
-import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.ChatMongoRepository;
-import com.mcphub.domain.workspace.repository.mongo.UserMcpMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.WorkspaceMongoRepository;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
@@ -35,7 +32,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     private final WorkspaceMongoRepository workspaceMongoRepository;
     private final ChatMongoRepository chatMongoRepository;
-    private final UserMcpMongoRepository userMcpMongoRepository;
 
     @Override
     @Transactional(readOnly = true)
