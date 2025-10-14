@@ -2,6 +2,7 @@ package com.mcphub.domain.workspace.service;
 
 import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
+import com.mcphub.domain.workspace.dto.request.WorkspaceLlmUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
@@ -131,6 +132,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                         .ifPresent(reqMcp -> existingMcp.setActive(reqMcp.isActive()))
         );
 
+        workspaceMongoRepository.save(updatedWorkspace);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateWorkspaceLlmActivation(WorkspaceLlmUpdateRequest request, String workspaceId, String userId) {
+        Workspace updatedWorkspace = workspaceMongoRepository.findById(workspaceId).orElseThrow(() -> new RestApiException(WorkspaceErrorStatus.WORKSPACE_NOT_FOUND));
+        if (updatedWorkspace.isDeleted()) throw new RestApiException(WorkspaceErrorStatus.DELETED_WORKSPACE);
+        if (!updatedWorkspace.getUserId().equals(userId))
+            throw new RestApiException(WorkspaceErrorStatus.DELETED_WORKSPACE);
+
+        updatedWorkspace.setLlmId(request.llmId());
         workspaceMongoRepository.save(updatedWorkspace);
         return true;
     }

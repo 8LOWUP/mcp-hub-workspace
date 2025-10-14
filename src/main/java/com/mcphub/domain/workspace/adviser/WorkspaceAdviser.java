@@ -12,6 +12,7 @@ import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
 import com.mcphub.domain.workspace.mapper.WorkspaceMapper;
 import com.mcphub.domain.workspace.service.WorkspaceService;
+import com.mcphub.domain.workspace.status.LlmErrorStatus;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
 import com.mcphub.global.util.SecurityUtils;
@@ -111,6 +112,16 @@ public class WorkspaceAdviser {
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
 
         return workspaceService.updateWorkspaceMcpActivation(request, workspaceId, userId.toString());
+    }
+
+    public boolean updateActivatedLlmInWorkspace(String workspaceId, WorkspaceLlmUpdateRequest request) {
+        Long userId = securityUtils.getUserId();
+        String llmToken = llmTokenAdviser.getToken(request.llmId()).llmToken();
+        if (llmToken == null) {
+            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
+        }
+
+        return workspaceService.updateWorkspaceLlmActivation(request, workspaceId, userId.toString());
     }
 
     public WorkspaceChatResponse sendChat(String workspaceId, WorkspaceChatRequest request) {
