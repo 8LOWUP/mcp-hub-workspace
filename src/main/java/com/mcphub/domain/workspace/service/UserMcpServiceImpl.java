@@ -49,7 +49,7 @@ public class UserMcpServiceImpl implements UserMcpService {
     public List<McpUrl> getMcpUrlListByMcpIdList(List<McpId> mcpIdList) {
         List<McpUrl> mcpUrlList = new ArrayList<>();
         for(McpId mcpId : mcpIdList){
-            mcpUrlList.add(mcpUrlMongoRepository.findByMcpId(mcpId.mcpId()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.INVALID_MCP_URL)));
+            mcpUrlList.add(mcpUrlMongoRepository.findByIdMcpId(mcpId.mcpId()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.INVALID_MCP_URL)));
         }
         return mcpUrlList;
     }
