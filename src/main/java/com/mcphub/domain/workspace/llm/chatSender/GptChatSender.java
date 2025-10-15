@@ -3,6 +3,7 @@ package com.mcphub.domain.workspace.llm.chatSender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,6 +18,7 @@ import java.time.Duration;
 
 import java.util.*;
 
+@Slf4j
 public class GptChatSender implements ChatSender {
     @Override
     public JsonNode getResponse(String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
@@ -66,10 +68,10 @@ public class GptChatSender implements ChatSender {
                 node = outputArray.get(outputArray.size() - 1);
                 node = node.get("content").get(0).get("text");
             }
-            return outputArray;
+            return node;
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return null;
         }
     }

@@ -27,6 +27,7 @@ public class LlmTokenConverter {
     public LlmTokenResponse toLlmTokenResponse(LlmToken llmToken) {
         return LlmTokenResponse.builder()
                 .llmId(llmToken.getLlmId())
+                .exists(llmToken.getToken() != null)
                 .llmToken(llmToken.getToken())
                 .build();
     }

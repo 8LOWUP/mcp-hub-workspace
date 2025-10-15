@@ -2,7 +2,10 @@ package com.mcphub.domain.workspace.controller;
 
 import com.mcphub.domain.workspace.adviser.LlmAdviser;
 import com.mcphub.domain.workspace.dto.response.api.LlmResponse;
+import com.mcphub.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,10 +23,7 @@ public class LlmController {
 
     @Operation(summary = "사용가능한 모든 LLM 모델을 조회하는 API", description = "사용가능한 모든 LLM 모델을 조회하는 API 입니다", security = {})
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "LLM 모델 목록 불러오기 성공"
-            )
+            @ApiResponse(responseCode = "200", description = "LLM 모델 목록 불러오기 성공", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
     })
     @GetMapping
     public LlmResponse getLlmList() {

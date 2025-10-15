@@ -12,6 +12,9 @@ import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
 import com.mcphub.domain.workspace.mapper.WorkspaceMapper;
 import com.mcphub.domain.workspace.service.WorkspaceService;
+import com.mcphub.domain.workspace.status.LlmErrorStatus;
+import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
+import com.mcphub.global.common.exception.RestApiException;
 import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,37 +48,44 @@ public class WorkspaceAdviser {
         String userId = securityUtils.getUserId().toString(); // 토큰에서 userId 가져오기
         Workspace createdWorkspace = workspaceService.createWorkspace(userId, request);
 
-        // 채팅 요청
-        workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
-        List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
-        LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
-        JsonNode chatResponse = chatSenderManager.getResponse(
-                llmTokenDto.llmId(),
-                llmTokenDto.llmToken(),
-                mcpUrlTokenPairs,
-                request.chatMessage());
-        workspaceService.createChat(createdWorkspace.getId(), chatResponse.toString(), false);
+        try {
+            // 채팅 요청
+            workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
+            List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
+            LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
+            JsonNode chatResponse = chatSenderManager.getResponse(
+                    llmTokenDto.llmId(),
+                    llmTokenDto.llmToken(),
+                    mcpUrlTokenPairs,
+                    request.chatMessage());
+            workspaceService.createChat(createdWorkspace.getId(), chatResponse.toString(), false);
 
-        // LLM을 이용해 채팅방 제목 생성 & 업데이트
-        String requestMessage = workspaceConverter.toWorkspaceNameRequestMessage(request.chatMessage(), chatResponse.toString());
-        String workspaceName = chatSenderManager
-                .getResponse(llmTokenDto.llmId(), llmTokenDto.llmToken(), null, requestMessage)
-                .toString()
-                .replace("\"", "");
-        WorkspaceUpdateRequest updateRequest = WorkspaceUpdateRequest
-                .builder()
-                .title(workspaceName)
-                .build();
-        Workspace updatedWorkspace = workspaceService.updateWorkspace(
-                updateRequest,
-                createdWorkspace.getId(),
-                userId);
+            // LLM을 이용해 채팅방 제목 생성 & 업데이트
+            String requestMessage = workspaceConverter.toWorkspaceNameRequestMessage(request.chatMessage(), chatResponse.toString());
+            String workspaceName = chatSenderManager
+                    .getResponse(llmTokenDto.llmId(), llmTokenDto.llmToken(), null, requestMessage)
+                    .toString()
+                    .replace("\"", "");
+            WorkspaceUpdateRequest updateRequest = WorkspaceUpdateRequest
+                    .builder()
+                    .title(workspaceName)
+                    .build();
+            Workspace updatedWorkspace = workspaceService.updateWorkspace(
+                    updateRequest,
+                    createdWorkspace.getId(),
+                    userId);
 
-        return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
+            return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
+        } catch (RestApiException ex) {
+            workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
+            throw ex;
+        } catch (Exception e) {
+            workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
+            throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_CREATION_FAILED);
+        }
     }
 
     public List<WorkspaceHistoryResponse> getWorkspaceHistory() {
-
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
         return workspaceService.getWorkspaceHistory(userId.toString()).stream().map(workspaceConverter::toWorkspaceHistoryResponse).toList();
     }
@@ -102,6 +112,16 @@ public class WorkspaceAdviser {
         Long userId = securityUtils.getUserId(); // 토큰에서 userId 가져오기
 
         return workspaceService.updateWorkspaceMcpActivation(request, workspaceId, userId.toString());
+    }
+
+    public boolean updateActivatedLlmInWorkspace(String workspaceId, WorkspaceLlmUpdateRequest request) {
+        Long userId = securityUtils.getUserId();
+        String llmToken = llmTokenAdviser.getToken(request.llmId()).llmToken();
+        if (llmToken == null) {
+            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
+        }
+
+        return workspaceService.updateWorkspaceLlmActivation(request, workspaceId, userId.toString());
     }
 
     public WorkspaceChatResponse sendChat(String workspaceId, WorkspaceChatRequest request) {

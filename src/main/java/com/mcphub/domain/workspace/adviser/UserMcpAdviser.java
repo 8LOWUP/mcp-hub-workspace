@@ -28,7 +28,6 @@ public class UserMcpAdviser {
 
     public List<McpUrlTokenPair> getMcpUrlTokenPairList(String userId, List<McpInfo> mcpInfo) {
         List<UserMcp> userMcpList = userMcpService.getUserMcpListByMcpInfoList(userId, mcpInfo);
-
         List<McpId> mcpIdList = userMcpConverter.toMcpIdList(userMcpList);
         List<McpUrl> mcpUrlList = userMcpService.getMcpUrlListByMcpIdList(mcpIdList);
 

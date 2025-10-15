@@ -1,15 +1,13 @@
 package com.mcphub.domain.workspace.service;
 
-import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
+import com.mcphub.domain.workspace.dto.request.WorkspaceLlmUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
-import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.ChatMongoRepository;
-import com.mcphub.domain.workspace.repository.mongo.UserMcpMongoRepository;
 import com.mcphub.domain.workspace.repository.mongo.WorkspaceMongoRepository;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
@@ -34,7 +32,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     private final WorkspaceMongoRepository workspaceMongoRepository;
     private final ChatMongoRepository chatMongoRepository;
-    private final UserMcpMongoRepository userMcpMongoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,7 +43,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Transactional
     public Workspace createWorkspace(String userId, WorkspaceCreateRequest request) {
         // request 관련 에러 처리
-        if (userId.isEmpty() || request.llmId() == null || request.mcps().isEmpty())
+        if (userId.isEmpty() || request.llmId() == null)
             throw new RestApiException(WorkspaceErrorStatus.WORKSPACE_PARAMETER_ERROR);
 
         return workspaceMongoRepository.save(Workspace.builder()
@@ -131,6 +128,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                         .ifPresent(reqMcp -> existingMcp.setActive(reqMcp.isActive()))
         );
 
+        workspaceMongoRepository.save(updatedWorkspace);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateWorkspaceLlmActivation(WorkspaceLlmUpdateRequest request, String workspaceId, String userId) {
+        Workspace updatedWorkspace = workspaceMongoRepository.findById(workspaceId).orElseThrow(() -> new RestApiException(WorkspaceErrorStatus.WORKSPACE_NOT_FOUND));
+        if (updatedWorkspace.isDeleted()) throw new RestApiException(WorkspaceErrorStatus.DELETED_WORKSPACE);
+        if (!updatedWorkspace.getUserId().equals(userId))
+            throw new RestApiException(WorkspaceErrorStatus.DELETED_WORKSPACE);
+
+        updatedWorkspace.setLlmId(request.llmId());
         workspaceMongoRepository.save(updatedWorkspace);
         return true;
     }

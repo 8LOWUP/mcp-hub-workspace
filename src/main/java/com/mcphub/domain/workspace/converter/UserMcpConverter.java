@@ -20,7 +20,7 @@ public class UserMcpConverter {
     public List<McpId> toMcpIdList(List<UserMcp> userMcpList) {
         return userMcpList.stream()
                 .map(userMcp -> McpId.builder()
-                        .mcpId(userMcp.getMcpId())
+                        .mcpId(userMcp.getId().getMcpId())
                         .build())
                 .toList();
     }
@@ -28,12 +28,13 @@ public class UserMcpConverter {
     public List<McpUrlTokenPair> toMcpUrlTokenPariList(List<UserMcp> userMcpList, List<McpUrl> mcpUrlList) {
         // McpUrl 리스트를 Map으로 변환 (mcpId → McpUrl)
         Map<String, McpUrl> urlMap = mcpUrlList.stream()
-                .collect(Collectors.toMap(McpUrl::getMcpId, Function.identity()));
+                .collect(Collectors.toMap(mcpUrl -> mcpUrl.getId().getMcpId(), Function.identity()));
+
 
         // UserMcp 기준으로 조인
         return userMcpList.stream()
                 .map(userMcp -> {
-                    McpUrl mcpUrl = urlMap.get(userMcp.getMcpId());
+                    McpUrl mcpUrl = urlMap.get(userMcp.getId().getMcpId());
                     if (mcpUrl != null) {
                         return new McpUrlTokenPair(mcpUrl.getMcpUrl(), userMcp.getMcpToken());
                     }

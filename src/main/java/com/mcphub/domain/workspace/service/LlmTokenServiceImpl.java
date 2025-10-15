@@ -6,6 +6,7 @@ import com.mcphub.domain.workspace.entity.LlmToken;
 import com.mcphub.domain.workspace.entity.enums.Llm;
 import com.mcphub.domain.workspace.repository.mongo.LlmTokenMongoRepository;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
+import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
 import com.mcphub.global.common.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.jasypt.encryption.StringEncryptor;
@@ -34,10 +35,15 @@ public class LlmTokenServiceImpl implements LlmTokenService {
 
     @Transactional
     public LlmToken get(String userId, Llm llmId) {
-        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId);
-        llmToken.setToken(stringEncryptor.decrypt(llmToken.getToken()));
-
-        return llmToken;
+        return llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId)
+                .map(token -> {
+                    token.setToken(stringEncryptor.decrypt(token.getToken()));
+                    return token;
+                })
+                .orElse(LlmToken.builder()
+                        .llmId(llmId)
+                        .token(null)
+                        .build());
     }
 
     @Transactional
@@ -57,12 +63,9 @@ public class LlmTokenServiceImpl implements LlmTokenService {
 
     @Transactional
     public LlmToken update(UpdateLlmTokenCommand cmd) {
-        //유저가 등록한 기록이 있는지 확인
-        if(!llmTokenMongoRepository.existsByUserIdAndLlmId(cmd.userId(), cmd.llmId()))
-            throw new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS);
+        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(cmd.userId(), cmd.llmId())
+                .orElseThrow(() -> new RestApiException(LlmErrorStatus.TOKEN_NOT_EXISTS));
 
-        //DB 업데이트
-        LlmToken llmToken = llmTokenMongoRepository.findByUserIdAndLlmId(cmd.userId(), cmd.llmId());
         String encryptedToken = stringEncryptor.encrypt(cmd.llmToken());
         llmToken.setToken(encryptedToken);
 
