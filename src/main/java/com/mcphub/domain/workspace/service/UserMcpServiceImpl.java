@@ -13,6 +13,10 @@ import com.mcphub.global.common.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.StringEncryptor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ public class UserMcpServiceImpl implements UserMcpService {
     private final UserMcpMongoRepository userMcpMongoRepository;
     private final McpUrlMongoRepository mcpUrlMongoRepository;
     private final StringEncryptor stringEncryptor;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     @Transactional
@@ -73,8 +78,17 @@ public class UserMcpServiceImpl implements UserMcpService {
         String encryptedToken = stringEncryptor.encrypt(request.token());
 
         for (UserMcp userMcp : userMcpList) {
-            userMcp.setMcpToken(encryptedToken);
-            userMcpMongoRepository.save(userMcp);
+            Query query = new Query();
+            query.addCriteria(
+                    Criteria.where("_id.userId").is(userMcp.getId().getUserId())
+                            .and("_id.mcpId").is(userMcp.getId().getMcpId())
+                            .and("platformId").is(platformId)
+            );
+
+            Update update = new Update();
+            update.set("mcpToken", encryptedToken);
+
+            mongoTemplate.updateFirst(query, update, UserMcp.class);
         }
 
         return userMcpList.get(0);
