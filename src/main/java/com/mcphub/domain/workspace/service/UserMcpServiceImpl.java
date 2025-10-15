@@ -34,7 +34,7 @@ public class UserMcpServiceImpl implements UserMcpService {
         for (McpInfo mcpInfo : mcpInfoList) {
             if(mcpInfo.isActive()) {
                 UserMcp userMcp = userMcpMongoRepository.findByUserIdAndMcpId(userId, mcpInfo.getId()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
-                if (!userMcp.getMcpToken().isEmpty()) {
+                if (userMcp.getMcpToken() != null && !userMcp.getMcpToken().isEmpty()) {
                     userMcp.setMcpToken(stringEncryptor.decrypt(userMcp.getMcpToken()));
                 }
                 userMcpList.add(userMcp);
