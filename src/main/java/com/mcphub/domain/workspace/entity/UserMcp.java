@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Builder
-public class UserMcp extends BaseDocument implements Persistable<String> {
+public class UserMcp extends BaseDocument implements Persistable<UserMcp.IdClass> {
     @Id
     private IdClass id;
 

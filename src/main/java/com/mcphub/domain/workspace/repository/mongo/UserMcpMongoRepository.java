@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserMcpMongoRepository extends MongoRepository<UserMcp, String> {
+public interface UserMcpMongoRepository extends MongoRepository<UserMcp,UserMcp.IdClass> {
     Optional<UserMcp> findByUserIdAndMcpId(String userId, String mcpId);
     Optional<List<UserMcp>> findByUserIdAndPlatformId(String userId, String platformId);
     Optional<UserMcp> findTopByUserIdAndPlatformId(String userId, String platformId);
