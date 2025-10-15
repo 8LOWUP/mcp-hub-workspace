@@ -109,7 +109,17 @@ public class UserMcpServiceImpl implements UserMcpService {
 
             if (platformMcp.getPlatformId().equals(platformId)) {
                 userMcp.setMcpToken(platformMcp.getMcpToken());
-                userMcpMongoRepository.save(userMcp);
+
+                Query query = new Query(
+                        Criteria.where("_id.userId").is(userMcp.getId().getUserId())
+                                .and("_id.mcpId").is(userMcp.getId().getMcpId())
+                );
+
+                Update update = new Update();
+                update.set("mcpToken", platformMcp.getMcpToken());
+
+                mongoTemplate.updateFirst(query, update, UserMcp.class);
+
                 result = true;
                 break;
             }
