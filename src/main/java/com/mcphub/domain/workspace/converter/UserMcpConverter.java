@@ -20,7 +20,7 @@ public class UserMcpConverter {
     public List<McpId> toMcpIdList(List<UserMcp> userMcpList) {
         return userMcpList.stream()
                 .map(userMcp -> McpId.builder()
-                        .mcpId(userMcp.getMcpId())
+                        .mcpId(userMcp.getId().getMcpId())
                         .build())
                 .toList();
     }
@@ -33,7 +33,7 @@ public class UserMcpConverter {
         // UserMcp 기준으로 조인
         return userMcpList.stream()
                 .map(userMcp -> {
-                    McpUrl mcpUrl = urlMap.get(userMcp.getMcpId());
+                    McpUrl mcpUrl = urlMap.get(userMcp.getId().getMcpId());
                     if (mcpUrl != null) {
                         return new McpUrlTokenPair(mcpUrl.getMcpUrl(), userMcp.getMcpToken());
                     }
