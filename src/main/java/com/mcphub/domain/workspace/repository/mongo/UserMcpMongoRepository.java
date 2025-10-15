@@ -10,8 +10,4 @@ public interface UserMcpMongoRepository extends MongoRepository<UserMcp,UserMcp.
     Optional<UserMcp> findByIdUserIdAndIdMcpId(String userId, String mcpId);
     Optional<List<UserMcp>> findByIdUserIdAndPlatformId(String userId, String platformId);
     Optional<UserMcp> findTopByIdUserIdAndPlatformId(String userId, String platformId);
-
-    List<UserMcp> deleteByMcpId(String mcpId);
-    boolean existsByMcpIdAndUserId(String mcpId, String userId);
-    UserMcp deleteByMcpIdAndUserId(String userId, String mcpId);
 }

@@ -89,7 +89,7 @@ public class UserMcpServiceImpl implements UserMcpService {
         boolean result = false;
         List<UserMcp> platformMcpList = userMcpMongoRepository.findByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         for (UserMcp platformMcp: platformMcpList) {
-            if (platformMcp.getUserId().equals(userId) && platformMcp.getMcpId().equals(mcpId)) {
+            if (platformMcp.getId().getUserId().equals(userId) && platformMcp.getId().getMcpId().equals(mcpId)) {
                 continue;
             }
 
