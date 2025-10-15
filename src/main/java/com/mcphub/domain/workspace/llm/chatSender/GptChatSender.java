@@ -17,6 +17,7 @@ import java.time.Duration;
 
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class GptChatSender implements ChatSender {
@@ -38,7 +39,7 @@ public class GptChatSender implements ChatSender {
             tool.put("type", "mcp");
             tool.put("server_label", "mcps");
             tool.put("server_url", mcpUrlTokenPair.url());
-            if(!Objects.equals(mcpUrlTokenPair.token(), ""))
+            if (!Objects.equals(mcpUrlTokenPair.token(), ""))
                 tool.put("authorization", mcpUrlTokenPair.token());
             tool.put("require_approval", "never");
 
@@ -57,7 +58,7 @@ public class GptChatSender implements ChatSender {
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(100, TimeUnit.SECONDS).join();
 
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("output");
@@ -70,7 +71,7 @@ public class GptChatSender implements ChatSender {
             }
             return node;
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
             return null;
         }
