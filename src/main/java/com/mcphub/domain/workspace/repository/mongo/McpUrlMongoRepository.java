@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface McpUrlMongoRepository  extends MongoRepository<McpUrl, String> {
-    Optional<McpUrl> findByMcpId(String mcpId);
-    boolean existsByMcpId(String mcpId);
+public interface McpUrlMongoRepository  extends MongoRepository<McpUrl, McpUrl.McpUrlId> {
+    Optional<McpUrl> findByIdMcpId(String mcpId);
 }

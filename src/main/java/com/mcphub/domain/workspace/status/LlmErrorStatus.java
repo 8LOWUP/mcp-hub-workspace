@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 public enum LlmErrorStatus implements BaseCodeInterface {
 
     INVALID_LLM_TOKEN(HttpStatus.BAD_REQUEST, "LLM001", "LLM Token 값이 유효하지 않습니다."),
-    TOKEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "LLM002", "이미 토큰이 등록된 기록이 있습니다."),
-    TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "LLM003", "등록된 토큰이 존재하지 않습니다.")
+    TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "LLM002", "등록된 토큰이 존재하지 않습니다."),
+    TOKEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "LLM003", "이미 토큰이 등록된 기록이 있습니다.")
     ;
 
     private final HttpStatus httpStatus;
