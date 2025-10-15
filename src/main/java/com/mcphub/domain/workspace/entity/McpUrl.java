@@ -16,7 +16,6 @@ public class McpUrl extends BaseDocument implements Persistable<McpUrl.McpUrlId>
 
     @Id
     private McpUrlId id;
-    private String mcpId;
     private String mcpUrl;
 
     @Override
