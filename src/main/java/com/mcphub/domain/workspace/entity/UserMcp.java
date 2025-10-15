@@ -14,8 +14,6 @@ public class UserMcp extends BaseDocument implements Persistable<UserMcp.IdClass
     @Id
     private IdClass id;
 
-    private String userId;
-    private String mcpId;
     private String platformId;
     private String mcpToken;
 
