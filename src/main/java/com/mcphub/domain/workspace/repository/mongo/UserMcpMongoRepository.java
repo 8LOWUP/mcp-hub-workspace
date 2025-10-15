@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserMcpMongoRepository extends MongoRepository<UserMcp,UserMcp.IdClass> {
-    Optional<UserMcp> findById_UserIdAndId_McpId(String userId, String mcpId);
-    Optional<List<UserMcp>> findById_UserIdAndPlatformId(String userId, String platformId);
-    Optional<UserMcp> findTopById_UserIdAndPlatformId(String userId, String platformId);
+    Optional<UserMcp> findByIdUserIdAndIdMcpId(String userId, String mcpId);
+    Optional<List<UserMcp>> findByIdUserIdAndPlatformId(String userId, String platformId);
+    Optional<UserMcp> findTopByIdUserIdAndPlatformId(String userId, String platformId);
 
     List<UserMcp> deleteByMcpId(String mcpId);
     boolean existsByMcpIdAndUserId(String mcpId, String userId);

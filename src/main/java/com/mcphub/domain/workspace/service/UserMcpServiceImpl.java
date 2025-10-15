@@ -33,7 +33,7 @@ public class UserMcpServiceImpl implements UserMcpService {
         List<UserMcp> userMcpList = new ArrayList<>();
         for (McpInfo mcpInfo : mcpInfoList) {
             if(mcpInfo.isActive()) {
-                UserMcp userMcp = userMcpMongoRepository.findById_UserIdAndId_McpId(userId, mcpInfo.getId()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
+                UserMcp userMcp = userMcpMongoRepository.findByIdUserIdAndIdMcpId(userId, mcpInfo.getId()).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
                 if (userMcp.getMcpToken() != null && !userMcp.getMcpToken().isEmpty()) {
                     userMcp.setMcpToken(stringEncryptor.decrypt(userMcp.getMcpToken()));
                 }
@@ -57,7 +57,7 @@ public class UserMcpServiceImpl implements UserMcpService {
     @Override
     @Transactional
     public UserMcp getUserMcpToken(String userId, String platformId) {
-        UserMcp userMcp = userMcpMongoRepository.findTopById_UserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
+        UserMcp userMcp = userMcpMongoRepository.findTopByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         if (userMcp.getMcpToken() == null) {
             throw new RestApiException(UserMcpErrorStatus.UNREGISTERED_MCP_TOKEN);
         }
@@ -69,7 +69,7 @@ public class UserMcpServiceImpl implements UserMcpService {
     @Override
     @Transactional
     public UserMcp updateUserMcpToken(String userId, String platformId, UserMcpTokenUpdateRequest request) {
-        List<UserMcp> userMcpList = userMcpMongoRepository.findById_UserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
+        List<UserMcp> userMcpList = userMcpMongoRepository.findByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         String encryptedToken = stringEncryptor.encrypt(request.token());
 
         for (UserMcp userMcp : userMcpList) {
@@ -83,11 +83,11 @@ public class UserMcpServiceImpl implements UserMcpService {
     @Override
     @Transactional
     public UserMcpTokenCheckResponse checkUserMcpToken(String userId, String mcpId) {
-        UserMcp userMcp = userMcpMongoRepository.findById_UserIdAndId_McpId(userId, mcpId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
+        UserMcp userMcp = userMcpMongoRepository.findByIdUserIdAndIdMcpId(userId, mcpId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         String platformId = userMcp.getPlatformId();
 
         boolean result = false;
-        List<UserMcp> platformMcpList = userMcpMongoRepository.findById_UserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
+        List<UserMcp> platformMcpList = userMcpMongoRepository.findByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         for (UserMcp platformMcp: platformMcpList) {
             if (platformMcp.getUserId().equals(userId) && platformMcp.getMcpId().equals(mcpId)) {
                 continue;
