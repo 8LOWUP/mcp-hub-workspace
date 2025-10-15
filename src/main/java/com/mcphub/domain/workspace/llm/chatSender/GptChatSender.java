@@ -58,7 +58,7 @@ public class GptChatSender implements ChatSender {
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(100, TimeUnit.SECONDS).join();
+            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(1000, TimeUnit.SECONDS).join();
 
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("output");
