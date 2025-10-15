@@ -99,6 +99,9 @@ public class UserMcpServiceImpl implements UserMcpService {
     public UserMcpTokenCheckResponse checkUserMcpToken(String userId, String mcpId) {
         UserMcp userMcp = userMcpMongoRepository.findByIdUserIdAndIdMcpId(userId, mcpId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         String platformId = userMcp.getPlatformId();
+        if (platformId == null) {
+            throw new RestApiException(UserMcpErrorStatus.MCP_PLATFORM_ID_NOT_FOUND);
+        }
 
         boolean result = false;
         List<UserMcp> platformMcpList = userMcpMongoRepository.findByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));

@@ -14,6 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ClaudeChatSender implements ChatSender{
     @Override
@@ -60,7 +61,7 @@ public class ClaudeChatSender implements ChatSender{
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(100, TimeUnit.SECONDS).join();
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("content");
             JsonNode node = null;
@@ -72,7 +73,7 @@ public class ClaudeChatSender implements ChatSender{
             }
             return node;
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             return null;
         }
     }
