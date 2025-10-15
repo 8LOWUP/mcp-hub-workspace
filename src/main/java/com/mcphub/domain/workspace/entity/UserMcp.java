@@ -4,9 +4,11 @@ import com.mcphub.global.common.base.BaseDocument;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "userMcp")
+@CompoundIndex(name = "user_mcp_idx", def = "{'id.userId': 1, 'id.mcpId': 1}", unique = true)
 @Getter
 @Setter
 @Builder
