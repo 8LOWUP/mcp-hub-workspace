@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -58,7 +59,7 @@ public class GptChatSender implements ChatSender {
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(1000, TimeUnit.SECONDS).join();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("output");
@@ -71,7 +72,7 @@ public class GptChatSender implements ChatSender {
             }
             return node;
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             log.error(e.getMessage(), e);
             return null;
         }

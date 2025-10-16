@@ -3,6 +3,7 @@ package com.mcphub.domain.workspace.llm.chatSender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,6 +17,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ClaudeChatSender implements ChatSender{
     @Override
     public JsonNode getResponse(String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
@@ -61,7 +63,7 @@ public class ClaudeChatSender implements ChatSender{
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(1000, TimeUnit.SECONDS).join();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("content");
             JsonNode node = null;
@@ -73,7 +75,8 @@ public class ClaudeChatSender implements ChatSender{
             }
             return node;
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage(), e);
             return null;
         }
     }
