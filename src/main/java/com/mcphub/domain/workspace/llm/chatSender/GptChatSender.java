@@ -2,6 +2,7 @@ package com.mcphub.domain.workspace.llm.chatSender;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
@@ -35,10 +36,11 @@ public class GptChatSender implements ChatSender {
         requestBody.put("model", "gpt-5");
 
         JSONArray tools = new JSONArray();
+        int index = 1;
         for (McpUrlTokenPair mcpUrlTokenPair : ListUtils.emptyIfNull(mcpUrlTokenList)) {
             JSONObject tool = new JSONObject();
             tool.put("type", "mcp");
-            tool.put("server_label", "mcps");
+            tool.put("server_label", "mcps" + index++);
             tool.put("server_url", mcpUrlTokenPair.url());
             if (!Objects.equals(mcpUrlTokenPair.token(), ""))
                 tool.put("authorization", mcpUrlTokenPair.token());
@@ -60,6 +62,19 @@ public class GptChatSender implements ChatSender {
         try {
             // 요청 보내고 응답 받기
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 424) {
+                JsonNode rootNode = objectMapper.readTree(response.body());
+                JsonNode message = rootNode.get("error").get("message");
+
+                if (message != null && message.toString().contains("424")) {
+                    return TextNode.valueOf("[SERVER ERROR] 유효하지 않은 MCP URL이거나 MCP 서버 접속에 오류가 발생했습니다.");
+                }
+                else if (message != null && message.toString().contains("401")) {
+                    return TextNode.valueOf("[SERVER ERROR] MCP 토큰이 유효하지 않습니다. 다시 확인해주세요.");
+                }
+                return rootNode.get("error").get("message");
+            }
 
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("output");
