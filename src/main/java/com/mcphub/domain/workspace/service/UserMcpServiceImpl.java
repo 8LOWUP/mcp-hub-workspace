@@ -67,7 +67,9 @@ public class UserMcpServiceImpl implements UserMcpService {
             throw new RestApiException(UserMcpErrorStatus.UNREGISTERED_MCP_TOKEN);
         }
 
-        userMcp.setMcpToken(stringEncryptor.decrypt(userMcp.getMcpToken()));
+        if (!userMcp.getMcpToken().isEmpty()) {
+            userMcp.setMcpToken(stringEncryptor.decrypt(userMcp.getMcpToken()));
+        }
         return userMcp;
     }
 
