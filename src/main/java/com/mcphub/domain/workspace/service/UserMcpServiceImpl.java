@@ -89,6 +89,7 @@ public class UserMcpServiceImpl implements UserMcpService {
 
             Update update = new Update();
             update.set("mcpToken", encryptedToken);
+            update.set("saved", true);
 
             mongoTemplate.updateFirst(query, update, UserMcp.class);
         }
@@ -108,7 +109,17 @@ public class UserMcpServiceImpl implements UserMcpService {
         boolean result = false;
         List<UserMcp> platformMcpList = userMcpMongoRepository.findByIdUserIdAndPlatformId(userId, platformId).orElseThrow(() -> new RestApiException(UserMcpErrorStatus.MCP_NOT_YET_REGISTERED_FOR_USER));
         for (UserMcp platformMcp: platformMcpList) {
-            if (platformMcp.getId().getUserId().equals(userId) && platformMcp.getId().getMcpId().equals(mcpId)) {
+            if (platformMcp.getSaved() == null || !platformMcp.getSaved()) {
+                Query query = new Query(
+                        Criteria.where("_id.userId").is(platformMcp.getId().getUserId())
+                                .and("_id.mcpId").is(platformMcp.getId().getMcpId())
+                );
+
+                Update update = new Update();
+                update.set("saved", true);
+
+                mongoTemplate.updateFirst(query, update, UserMcp.class);
+
                 continue;
             }
 
@@ -122,6 +133,7 @@ public class UserMcpServiceImpl implements UserMcpService {
 
                 Update update = new Update();
                 update.set("mcpToken", platformMcp.getMcpToken());
+                update.set("saved", true);
 
                 mongoTemplate.updateFirst(query, update, UserMcp.class);
 
