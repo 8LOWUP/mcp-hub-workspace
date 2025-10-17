@@ -7,10 +7,8 @@ import com.mcphub.domain.workspace.dto.request.*;
 import com.mcphub.domain.workspace.dto.response.*;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
 import com.mcphub.domain.workspace.entity.Chat;
-import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
-import com.mcphub.domain.workspace.mapper.WorkspaceMapper;
 import com.mcphub.domain.workspace.service.WorkspaceService;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
 import com.mcphub.domain.workspace.status.WorkspaceErrorStatus;
@@ -19,14 +17,10 @@ import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Component
@@ -39,7 +33,6 @@ public class WorkspaceAdviser {
 
     private final WorkspaceConverter workspaceConverter;
     private final LlmTokenAdviser llmTokenAdviser;
-    private final UserMcpAdviser userMcpAdviser;
     private final ChatSenderManager chatSenderManager;
 
     private final int DEFAULT_PREVIOUS_CHATS = 5;
@@ -51,7 +44,11 @@ public class WorkspaceAdviser {
         try {
             // 채팅 요청
             workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
-            List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
+
+            // 활성화된 MCP들의 URL과 토큰값 가져오기 todo grpc 통신하기
+            //todo List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
+            List<McpUrlTokenPair> mcpUrlTokenPairs = 지알피시통신
+
             LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
             JsonNode chatResponse = chatSenderManager.getResponse(
                     llmTokenDto.llmId(),
@@ -132,10 +129,11 @@ public class WorkspaceAdviser {
         String userId = securityUtils.getUserId().toString();
         Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
 
-        //userMcpLsit => mcp_id => 요청 => 받아서 mcpUrlTokenPairs
-        List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, workspace.getMcps());
+        //userMcpLsit => mcp_id => 요청 => 받아서 mcpUrlTokenPairs todo grpc 통신하기
+        // todo List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, workspace.getMcps());
+        List<McpUrlTokenPair> mcpUrlTokenPairs = 지알피시통신
 
-        //userId와 llmId로 llm 토큰 가져오기
+                //userId와 llmId로 llm 토큰 가져오기
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());
 
         //이전 채팅 기록 가져오기

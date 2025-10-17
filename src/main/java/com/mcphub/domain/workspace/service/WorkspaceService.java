@@ -1,14 +1,11 @@
 package com.mcphub.domain.workspace.service;
 
-import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.request.WorkspaceCreateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceLlmUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceMcpUpdateRequest;
 import com.mcphub.domain.workspace.dto.request.WorkspaceUpdateRequest;
 import com.mcphub.domain.workspace.entity.Chat;
-import com.mcphub.domain.workspace.entity.UserMcp;
 import com.mcphub.domain.workspace.entity.Workspace;
-import com.mcphub.domain.workspace.entity.enums.Llm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
