@@ -8,6 +8,7 @@ import com.mcphub.domain.workspace.dto.response.*;
 import com.mcphub.domain.workspace.dto.response.api.LlmTokenResponse;
 import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.Workspace;
+import com.mcphub.domain.workspace.grpc.McpGrpcClient;
 import com.mcphub.domain.workspace.llm.chatSender.ChatSenderManager;
 import com.mcphub.domain.workspace.service.WorkspaceService;
 import com.mcphub.domain.workspace.status.LlmErrorStatus;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,8 @@ public class WorkspaceAdviser {
     private final SecurityUtils securityUtils;
 
     private final WorkspaceService workspaceService;
+
+    private final McpGrpcClient mcpGrpcClient;
 
     private final WorkspaceConverter workspaceConverter;
     private final LlmTokenAdviser llmTokenAdviser;
@@ -45,9 +50,12 @@ public class WorkspaceAdviser {
             // 채팅 요청
             workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
 
-            // 활성화된 MCP들의 URL과 토큰값 가져오기 todo grpc 통신하기
-            //todo List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
-            List<McpUrlTokenPair> mcpUrlTokenPairs = 지알피시통신
+            // grcp 통신 todo 테스트 필요
+            List<McpUrlTokenPair> mcpUrlTokenPairs = mcpGrpcClient
+                    .getMcpUrlTokenPairs(
+                            userId,
+                            workspaceConverter.toActiveMcpIdList(createdWorkspace.getMcps())
+                    ).stream().toList();
 
             LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
             JsonNode chatResponse = chatSenderManager.getResponse(
@@ -129,9 +137,12 @@ public class WorkspaceAdviser {
         String userId = securityUtils.getUserId().toString();
         Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
 
-        //userMcpLsit => mcp_id => 요청 => 받아서 mcpUrlTokenPairs todo grpc 통신하기
-        // todo List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, workspace.getMcps());
-        List<McpUrlTokenPair> mcpUrlTokenPairs = 지알피시통신
+        // grcp 통신 todo 테스트 필요
+        List<McpUrlTokenPair> mcpUrlTokenPairs = mcpGrpcClient
+                .getMcpUrlTokenPairs(
+                        userId,
+                        workspaceConverter.toActiveMcpIdList(workspace.getMcps())
+                ).stream().toList();
 
                 //userId와 llmId로 llm 토큰 가져오기
         LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(workspace.getLlmId());

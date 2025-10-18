@@ -1,6 +1,7 @@
 package com.mcphub.domain.workspace.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mcphub.domain.workspace.common.McpInfo;
 import com.mcphub.domain.workspace.dto.response.*;
 import com.mcphub.domain.workspace.entity.Chat;
 import com.mcphub.domain.workspace.entity.Workspace;
@@ -71,5 +72,12 @@ public class WorkspaceConverter {
 
     public String toWorkspaceNameRequestMessage(String requestMessage, String responseMessage) {
         return "다음 두 개의 메시지를 보고 적절한 채팅방 이름을 정해줘. 답변은 채팅방 이름만" + "\n" + "사용자: " + requestMessage + "\n" + "응답: " +responseMessage;
+    }
+
+    public List<Long> toActiveMcpIdList(List<McpInfo> mcps) {
+        return mcps.stream()
+                .filter(McpInfo::isActive)
+                .map(mcp -> Long.parseLong(mcp.getId()))
+                .toList();
     }
 }
