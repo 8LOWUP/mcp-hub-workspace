@@ -48,7 +48,7 @@ public class WorkspaceAdviser {
             // 채팅 요청
             workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
 
-            // grcp 통신 todo 테스트 필요
+            // grcp 통신 todo 테스트 필요, 캐싱 필요 -> 그럼 통신이 서비스 안에서 이루어져야 할 듯
             List<McpUrlTokenPair> mcpUrlTokenPairs = mcpGrpcClient
                     .getMcpUrlTokenPairs(
                             userId,
@@ -135,7 +135,7 @@ public class WorkspaceAdviser {
         String userId = securityUtils.getUserId().toString();
         Workspace workspace = workspaceService.getWorkspaceDetail(workspaceId, userId);
 
-        // grcp 통신 todo 테스트 필요
+        // grcp 통신 todo 테스트 필요 -> 그럼 통신이 서비스 안에서 이루어져야 할 듯
         List<McpUrlTokenPair> mcpUrlTokenPairs = mcpGrpcClient
                 .getMcpUrlTokenPairs(
                         userId,
