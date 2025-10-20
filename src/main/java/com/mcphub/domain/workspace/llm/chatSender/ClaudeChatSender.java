@@ -2,7 +2,9 @@ package com.mcphub.domain.workspace.llm.chatSender;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.mcphub.domain.workspace.dto.McpUrlTokenPair;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,6 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ClaudeChatSender implements ChatSender{
     @Override
     public JsonNode getResponse(String llmToken, List<McpUrlTokenPair> mcpUrlTokenList, String chatMessage) {
@@ -39,11 +42,12 @@ public class ClaudeChatSender implements ChatSender{
         requestBody.put("messages", messages);
 
         JSONArray mcp_servers = new JSONArray();
+        int index = 0;
         for (McpUrlTokenPair mcpUrlTokenPair : ListUtils.emptyIfNull(mcpUrlTokenList)) {
             JSONObject mcp_server = new JSONObject();
             mcp_server.put("type", "url");
             mcp_server.put("url", mcpUrlTokenPair.url());
-            mcp_server.put("name", "mcp");
+            mcp_server.put("name", "mcp"+index++);
             mcp_server.put("authorization_token", mcpUrlTokenPair.token());
 
             mcp_servers.add(mcp_server);
@@ -61,7 +65,11 @@ public class ClaudeChatSender implements ChatSender{
 
         try {
             // 요청 보내고 응답 받기
-            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).orTimeout(100, TimeUnit.SECONDS).join();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 400) {
+                return TextNode.valueOf("[SERVER ERROR] MCP 서버 접속에 오류가 발생했습니다. MCP url이나 MCP 토큰 값을 확인해주세요.");
+            }
+
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode outputArray = rootNode.get("content");
             JsonNode node = null;
@@ -73,7 +81,8 @@ public class ClaudeChatSender implements ChatSender{
             }
             return node;
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage(), e);
             return null;
         }
     }
