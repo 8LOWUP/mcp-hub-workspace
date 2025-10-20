@@ -83,7 +83,7 @@ jobs:
           TAG: ${{ env.TAG }}
         run: |
           cd infra
-          yq -i 'select(.kind == "Deployment").spec.template.spec.containers[0].image = "'"$IMAGE:$TAG"'"' workspace-deployment.yaml
+          yq -i 'select(.kind == "Deployment").spec.template.spec.containers[0].image = "'"$IMAGE:$TAG"'"' workspace/workspace-deployment.yaml
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git commit -am "[chore] : update workspace image to $IMAGE:$TAG"
