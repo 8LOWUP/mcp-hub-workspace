@@ -33,18 +33,37 @@ public class LlmTokenServiceImpl implements LlmTokenService {
                 .toList();
     }
 
-    @Transactional
+    // @Transactional
+    // public LlmToken get(String userId, Llm llmId) {
+    //     return llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId)
+    //             .map(token -> {
+    //                 token.setToken(stringEncryptor.decrypt(token.getToken()));
+    //                 return token;
+    //             })
+    //             .orElse(LlmToken.builder()
+    //                     .llmId(llmId)
+    //                     .token(null)
+    //                     .build());
+    // }
+
+    @Transactional(readOnly = true)
     public LlmToken get(String userId, Llm llmId) {
         return llmTokenMongoRepository.findByUserIdAndLlmId(userId, llmId)
-                .map(token -> {
-                    token.setToken(stringEncryptor.decrypt(token.getToken()));
-                    return token;
-                })
-                .orElse(LlmToken.builder()
-                        .llmId(llmId)
-                        .token(null)
-                        .build());
+            .map(src -> {
+                String value = tryDecryptOrReturnRaw(src.getToken());
+                return LlmToken.builder()
+                    .id(src.getId())
+                    .userId(src.getUserId())
+                    .llmId(src.getLlmId())
+                    .token(value)               // ← 조회 응답에 토큰 “그대로” 넣음
+                    .build();
+            })
+            .orElse(LlmToken.builder()
+                .llmId(llmId)
+                .token(null)
+                .build());
     }
+
 
     @Transactional
     public LlmToken create(CreateLlmTokenCommand cmd) {
@@ -70,5 +89,21 @@ public class LlmTokenServiceImpl implements LlmTokenService {
         llmToken.setToken(encryptedToken);
 
         return llmToken;
+    }
+
+    private String tryDecryptOrReturnRaw(String token) {
+        if (token == null || token.isBlank()) return null;
+
+        // 1) 이미 평문 규격이면(예: sk- 시작) 그대로 반환
+        if (token.startsWith("sk-")) return token;
+
+        // 2) ENC(...)처럼 암호문 포맷이면 복호화 시도하되 실패 시 “그대로” 반환
+        try {
+            // 암호화가 설정된 환경이면 복호화 성공, 아니면 예외 발생 → catch에서 원문 반환
+            return stringEncryptor.decrypt(token);
+        } catch (Throwable t) {
+            // log.warn("LLM token decrypt failed, return raw as-is", t);
+            return token; // ← 포인트: 절대 null로 만들지 말고 저장된 문자열 그대로
+        }
     }
 }
