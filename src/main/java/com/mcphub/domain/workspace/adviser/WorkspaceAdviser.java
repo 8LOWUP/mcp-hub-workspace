@@ -18,10 +18,12 @@ import com.mcphub.global.common.exception.RestApiException;
 import com.mcphub.global.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,9 +42,13 @@ public class WorkspaceAdviser {
     private final WorkspaceConverter workspaceConverter;
     private final LlmTokenAdviser llmTokenAdviser;
     private final UserMcpAdviser userMcpAdviser;
-    private final ChatSenderManager chatSenderManager;
+//    private final ChatSenderManager chatSenderManager;
 
     private final int DEFAULT_PREVIOUS_CHATS = 5;
+
+    String mockMcpApiUrl = "https://mock-llm-server-117104409890.europe-west1.run.app/v1/chat/completions/mcp"; // Cloud Run 배포된 주소
+    String mockApiUrl = "https://mock-llm-server-117104409890.europe-west1.run.app/v1/chat/completions/mcp"; // Cloud Run 배포된 주소
+    RestTemplate restTemplate = new RestTemplate();
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
         String userId = securityUtils.getUserId().toString(); // 토큰에서 userId 가져오기
@@ -53,19 +59,23 @@ public class WorkspaceAdviser {
             workspaceService.createChat(createdWorkspace.getId(), request.chatMessage(), true);
             List<McpUrlTokenPair> mcpUrlTokenPairs = userMcpAdviser.getMcpUrlTokenPairList(userId, createdWorkspace.getMcps());
             LlmTokenResponse llmTokenDto = llmTokenAdviser.getToken(createdWorkspace.getLlmId());
-            JsonNode chatResponse = chatSenderManager.getResponse(
-                    llmTokenDto.llmId(),
-                    llmTokenDto.llmToken(),
-                    mcpUrlTokenPairs,
-                    request.chatMessage());
+
+            String chatResponse = restTemplate.postForObject(mockMcpApiUrl, "test", String.class); // Mock LLM 서버 정상 동작 확인용 호출
+//            JsonNode chatResponse = chatSenderManager.getResponse(
+//                    llmTokenDto.llmId(),
+//                    llmTokenDto.llmToken(),
+//                    mcpUrlTokenPairs,
+//                    request.chatMessage());
             workspaceService.createChat(createdWorkspace.getId(), chatResponse.toString(), false);
 
-            // LLM을 이용해 채팅방 제목 생성 & 업데이트
+            // todo 테스트 LLM을 이용해 채팅방 제목 생성 & 업데이트
             String requestMessage = workspaceConverter.toWorkspaceNameRequestMessage(request.chatMessage(), chatResponse.toString());
-            String workspaceName = chatSenderManager
-                    .getResponse(llmTokenDto.llmId(), llmTokenDto.llmToken(), null, requestMessage)
-                    .toString()
-                    .replace("\"", "");
+//            String workspaceName = chatSenderManager
+//                    .getResponse(llmTokenDto.llmId(), llmTokenDto.llmToken(), null, requestMessage)
+//                    .toString()
+//                    .replace("\"", "");
+            String workspaceName = restTemplate.postForObject(mockApiUrl, "test", String.class); // todo Mock LLM 서버 정상 동작 확인용 호출
+
             WorkspaceUpdateRequest updateRequest = WorkspaceUpdateRequest
                     .builder()
                     .title(workspaceName)
@@ -75,7 +85,10 @@ public class WorkspaceAdviser {
                     createdWorkspace.getId(),
                     userId);
 
-            return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponse);
+            // todo 테스트
+            JsonNode chatResponseNode = restTemplate.postForObject(mockMcpApiUrl, "test", JsonNode.class); // todo Mock LLM 서버 정상 동작 확인용 호출
+
+            return workspaceConverter.toWorkspaceCreateResponse(updatedWorkspace, chatResponseNode);
         } catch (RestApiException ex) {
             workspaceService.deleteWorkspace(createdWorkspace.getId(), userId);
             throw ex;
@@ -143,16 +156,22 @@ public class WorkspaceAdviser {
         String prompt = workspaceConverter.toPrompt(chatList, request.chatMessage());
 
         //메시지와 mcpUrl, mcpToken 값과 llmToken 값으로 llm API에 요청
-        JsonNode llmResponse = chatSenderManager.getResponse(
-                llmTokenDto.llmId(),
-                llmTokenDto.llmToken(),
-                mcpUrlTokenPairs,
-                prompt);
+//        JsonNode llmResponse = chatSenderManager.getResponse(
+//                llmTokenDto.llmId(),
+//                llmTokenDto.llmToken(),
+//                mcpUrlTokenPairs,
+//                prompt);
+        String llmResponse = restTemplate.postForObject(mockApiUrl, "test", String.class); // todo Mock LLM 서버 정상 동작 확인용 호출
+
 
         //response 저장
         workspaceService.createChat(workspaceId, llmResponse.toString(), false);
 
-        return workspaceConverter.toWorkspaceChatResponse(workspaceId, llmResponse);
+        // todo 테스트
+        JsonNode llmResponsestest = restTemplate.postForObject(mockMcpApiUrl, "test", JsonNode.class); // todo Mock LLM 서버 정상 동작 확인용 호출
+
+
+        return workspaceConverter.toWorkspaceChatResponse(workspaceId, llmResponsestest);
     }
 
     public Page<WorkspaceChatHistoryResponse> getChatHistory(String workspaceId, Pageable pageable) {
