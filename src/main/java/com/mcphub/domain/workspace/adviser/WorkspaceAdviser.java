@@ -47,7 +47,7 @@ public class WorkspaceAdviser {
     private final int DEFAULT_PREVIOUS_CHATS = 5;
 
     String mockMcpApiUrl = "https://mock-llm-server-117104409890.europe-west1.run.app/v1/chat/completions/mcp"; // Cloud Run 배포된 주소
-    String mockApiUrl = "https://mock-llm-server-117104409890.europe-west1.run.app/v1/chat/completions/mcp"; // Cloud Run 배포된 주소
+    String mockApiUrl = "https://mock-llm-server-117104409890.europe-west1.run.app/v1/chat/completions"; // Cloud Run 배포된 주소
     RestTemplate restTemplate = new RestTemplate();
 
     public WorkspaceCreateResponse createWorkspace(WorkspaceCreateRequest request) {
